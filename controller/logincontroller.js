@@ -1,9 +1,11 @@
 const db = require('../models/db');
 
+//to render the login page
 exports.renderLogin = (req, res) => {
-    res.render('login', { title: 'LoginPage' });
+    res.render('login', { title: 'LoginPage', alerMessage: '' });
 };
 
+//to authenticate user
 exports.authenticateUser = (req, res) => {
     const { username, password } = req.body;
     console.log('Received data:', { username, password });
@@ -21,7 +23,9 @@ exports.authenticateUser = (req, res) => {
 				// Redirect to home page
 				res.redirect('/home');
 			} else {
-				res.send('Incorrect Username and/or Password!');
+				//display popup message and reload the login page
+                res.render('login', { title: 'Login Page', alertMessage: 'Incorrect Username and/or Password!' });
+				// res.send('Incorrect Username and/or Password!');
 			}			
 			res.end();
 		});
@@ -31,9 +35,11 @@ exports.authenticateUser = (req, res) => {
 	}
 };
 
+//to direct to diff home page for employee and hod
 exports.renderHome = (req, res) => {
     if (req.session.loggedin) {
         // res.send('Welcome back, ' + req.session.username + '!');
+		//check if username is hod or employee, and render the relevant pages
         if (req.session.username=="testhod") {
             const hodName = req.session.username;
             res.render('hodhome', {title: "Welcome HOD", hodName});

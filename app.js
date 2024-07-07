@@ -30,7 +30,7 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true
 }));
-
+//direct to login page first
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
