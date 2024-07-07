@@ -6,7 +6,6 @@ var logger = require('morgan');
 const bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 var app = express();
 
@@ -25,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Middleware
 app.use(bodyParser.urlencoded({extended: true}));
+//establish session to identify whether login done or not
 app.use(session({
 	secret: 'secret',
 	resave: true,

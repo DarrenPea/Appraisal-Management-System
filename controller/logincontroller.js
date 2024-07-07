@@ -33,7 +33,14 @@ exports.authenticateUser = (req, res) => {
 
 exports.renderHome = (req, res) => {
     if (req.session.loggedin) {
-        res.send('Welcome back, ' + req.session.username + '!');
+        // res.send('Welcome back, ' + req.session.username + '!');
+        if (req.session.username=="testhod") {
+            const hodName = req.session.username;
+            res.render('hodhome', {title: "Welcome HOD", hodName});
+        }else {
+            const employeeName = req.session.username;
+            res.render('employeehome', {title: "Welcome Employee", employeeName});
+        }
     } else {
         res.send('Please login to view this page!');
     }
