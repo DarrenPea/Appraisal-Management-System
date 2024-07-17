@@ -13,7 +13,12 @@ class Employee {
       lastAppraisalDate,
       appraisalScore,
       appraisalAssigned,
-      role
+      role,
+      department,
+      jobFunction,
+      KPI,
+      disciplinaryRecord,
+      attendanceRecord
     ) {
       this.staffID = staffID;
       this.employeePassword = employeePassword;
@@ -25,6 +30,11 @@ class Employee {
       this.appraisalScore = appraisalScore;
       this.appraisalAssigned = appraisalAssigned;
       this.role = role;
+      this.department = department;
+      this.jobFunction = jobFunction;
+      this.KPI = KPI;
+      this.disciplinaryRecord = disciplinaryRecord;
+      this.attendanceRecord = attendanceRecord;
     }
   }
 
@@ -41,7 +51,12 @@ class Employee {
           lastAppraisalDate DATE,
           appraisalScore INT,
           appraisalAssigned BOOLEAN,
-          role VARCHAR(100)
+          role VARCHAR(100),
+          department VARCHAR(100),
+          jobFunction VARCHAR(255),
+          KPI INT,
+          disciplinaryRecord VARCHAR(255),
+          attendanceRecord VARCHAR(255)
         )
       `);
       console.log(`Table ${tableName} created or already exists.`);
@@ -73,4 +88,28 @@ class Employee {
     }
   }
 
-  module.exports = {Employee, sync, findStatusByID};
+  async function findRecordsByID(staffID) {
+    try {
+      const [rows] = await db.query('SELECT jobFunction, KPI, disciplinaryRecord, attendanceRecord FROM employee WHERE staffID = ?', [staffID]);
+  
+      if (rows.length === 0) {
+        throw new Error('Employee not found');
+      }
+  
+      const employeeRecords = rows[0];
+      // destructure
+      const {jobFunction, KPI, disciplinaryRecord, attendanceRecord} = employeeRecords; 
+  
+      return {
+        jobFunction,
+        KPI,
+        disciplinaryRecord,
+        attendanceRecord
+      };
+    } catch (error) {
+      console.error("Database connection failed. " + error);
+      throw error;
+    }
+  }
+
+  module.exports = {Employee, sync, findStatusByID, findRecordsByID};
