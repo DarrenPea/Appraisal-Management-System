@@ -8,7 +8,7 @@ let pool = mysql
     database: "nodelogin",
     password: "pw123",
     connectionLimit: 10,
-  });
+  }).promise();
 
 async function cleanup() {
     await pool.end();
