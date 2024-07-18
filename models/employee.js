@@ -28,7 +28,7 @@ class Employee {
       this.employeeDateJoined = employeeDateJoined;
       this.nextAppraisalDate = nextAppraisalDate;
       this.appraisalScore = appraisalScore;
-      this.appraisalAssigned = apprarlisalAssigned;
+      this.appraisalAssigned = appraisalAssigned;
       this.role = role;
       this.department = department;
       this.jobFunction = jobFunction;
