@@ -8,6 +8,9 @@ var app = require('../app');
 var debug = require('debug')('esc-backend:server');
 var http = require('http');
 
+const cron = require('node-cron');
+const { spawn } = require('child_process');
+
 /**
  * Get port from environment and store in Express.
  */
@@ -20,6 +23,29 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+
+/**
+ * Schedule server_clock.js using cron.
+ * Adjust the cron schedule as needed.
+ */
+
+cron.schedule('0 0 1 * *', () => {
+  const process = spawn('node', ['tasks/server_clock.js']);
+
+  process.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+
+  process.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  process.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+  });
+});
+
 
 /**
  * Listen on provided port, on all network interfaces.
