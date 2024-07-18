@@ -5,12 +5,12 @@ const tableName = 'employee';
 class Employee {
     constructor(
       staffID,
+      managerID,
       employeePassword,
       employeeName,
       employeeEmail,
-      dateOfAppraisalMeeting,
       employeeDateJoined,
-      lastAppraisalDate,
+      nextAppraisalDate,
       appraisalScore,
       appraisalAssigned,
       role,
@@ -21,14 +21,14 @@ class Employee {
       attendanceRecord
     ) {
       this.staffID = staffID;
+      this.managerID = managerID;
       this.employeePassword = employeePassword;
       this.employeeName = employeeName;
       this.employeeEmail = employeeEmail;
-      this.dateOfAppraisalMeeting = dateOfAppraisalMeeting;
       this.employeeDateJoined = employeeDateJoined;
-      this.lastAppraisalDate = lastAppraisalDate;
+      this.nextAppraisalDate = nextAppraisalDate;
       this.appraisalScore = appraisalScore;
-      this.appraisalAssigned = appraisalAssigned;
+      this.appraisalAssigned = apprarlisalAssigned;
       this.role = role;
       this.department = department;
       this.jobFunction = jobFunction;
@@ -43,12 +43,12 @@ class Employee {
       await db.pool.query(`
         CREATE TABLE IF NOT EXISTS ${tableName} (
           staffID VARCHAR(50) PRIMARY KEY,
+          managerID VARCHAR(50) PRIMARY KEY,
           employeePassword VARCHAR(255),
           employeeName VARCHAR(255),
           employeeEmail VARCHAR(255),
-          dateOfAppraisalMeeting DATE,
           employeeDateJoined DATE,
-          lastAppraisalDate DATE,
+          nextAppraisalDate DATE,
           appraisalScore INT,
           appraisalAssigned BOOLEAN,
           role VARCHAR(100),
@@ -112,4 +112,50 @@ class Employee {
     }
   }
 
-  module.exports = {Employee, sync, findStatusByID, findRecordsByID};
+  async function findByAppraisalDateDue(staffID) {
+    try {
+      const today = new Date();
+      const currentMonth = today.getMonth() + 1;
+
+      // Query to get employees whose next appraisal month is the current month
+      const [employees] = await db.query(`SELECT employeeID, managerID FROM employee where MONTH(next_appraisal_date) = ?`, [currentMonth]);
+      return employees;
+      } catch (error) {
+        console.error('Error finding employees by appraisal date:', error);
+        throw error;
+      }
+    }
+
+  async function updateNextAppraisalDate(employeeID){
+  let date_join;
+  try{
+    const query = `
+      SELECT employeeDateJoined
+      FROM ${tableName}
+      WHERE employeeID = ?
+    `;
+
+    const [rows] = await db.query(query, [employeeID]);
+    date_join = rows[0].employeeDateJoined;
+  }
+  catch (error) {
+    throw new Error('Could not get date_joined');
+  }
+
+  try{
+    const query = `
+      UPDATE ${tableName} 
+      SET nextAppraisalDate = STR_TO_DATE(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)), '-', MONTH(date_join), '-', DAY(date_join)), '%Y-%m-%d')
+      WHERE employeeID = ?
+    `;
+
+    await db.query(query, [employeeID]);
+    return true
+  } 
+  catch (error) {
+    throw new Error('Next meeting not updated');
+  }
+}
+
+
+  module.exports = {Employee, sync, findStatusByID, findRecordsByID, findByAppraisalDateDue, updateNextAppraisalDate};
