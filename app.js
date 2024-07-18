@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser');
 var process = require('process');
-var db = require('./models/db.js');
 
 var employeeModel = require('./models/employee.js');
 var formModel = require('../models/appraisalform.js');
@@ -26,7 +25,6 @@ var app = express();
 const db = require("./models/db")
 const session = require('express-session');
 
-require('./tasks/server_clock.js'); 
 
 
 // view engine setup
