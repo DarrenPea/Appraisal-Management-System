@@ -64,14 +64,68 @@ class AppraisalForm {
 
 async function sync() {
   try {
-    db.pool.query(`
-        CREATE TABLE IF NOT EXISTS ${tableName} (
-            msg VARCHAR(255),
-            time DATETIME PRIMARY KEY
-        )
-        `);
+    await db.pool.query(`
+      CREATE TABLE IF NOT EXISTS ${tableName} (
+        formID INT AUTO_INCREMENT PRIMARY KEY,
+        employeeID INT NOT NULL,
+        managerID INT,
+        statusEmployee BOOLEAN,
+        statusHOD BOOLEAN,
+        formDateUploaded DATETIME,
+        a1 VARCHAR(255),
+        a2_1 VARCHAR(255),
+        a2_2 VARCHAR(255),
+        a2_3 VARCHAR(255),
+        a2_4 VARCHAR(255),
+        a2_5 VARCHAR(255),
+        a2_6 VARCHAR(255),
+        a2_7 VARCHAR(255),
+        a2_8 VARCHAR(255),
+        a3_1 VARCHAR(255),
+        commentsA3_1 TEXT,
+        a3_2 VARCHAR(255),
+        commentsA3_2 TEXT,
+        a3_3 VARCHAR(255),
+        commentsA3_3 TEXT,
+        a3_4 VARCHAR(255),
+        commentsA3_4 TEXT,
+        a3_5 VARCHAR(255),
+        commentsA3_5 TEXT,
+        a3_6 VARCHAR(255),
+        commentsA3_6 TEXT,
+        a3_7 VARCHAR(255),
+        commentsA3_7 TEXT,
+        a3_8 VARCHAR(255),
+        commentsA3_8 TEXT,
+        a3_9 VARCHAR(255),
+        commentsA3_9 TEXT,
+        a3_10 VARCHAR(255),
+        commentsA3_10 TEXT,
+        a3_11 VARCHAR(255),
+        commentsA3_11 TEXT,
+        a3_12 VARCHAR(255),
+        commentsA3_12 TEXT,
+        a3_13 VARCHAR(255),
+        commentsA3_13 TEXT,
+        a3_14 VARCHAR(255),
+        commentsA3_14 TEXT,
+        a3_15 VARCHAR(255),
+        commentsA3_15 TEXT,
+        a3_16 VARCHAR(255),
+        commentsA3_16 TEXT,
+        a3_17 VARCHAR(255),
+        commentsA3_17 TEXT,
+        a3_18 VARCHAR(255),
+        commentsA3_18 TEXT,
+        a3_19 VARCHAR(255),
+        commentsA3_19 TEXT,
+        a3_20 VARCHAR(255),
+        commentsA3_20 TEXT,
+        b TEXT
+      )
+    `);
   } catch (error) {
-    console.error("database connection failed. " + error);
+    console.error("Database connection failed. " + error);
     throw error;
   }
 }
