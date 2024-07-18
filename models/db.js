@@ -5,7 +5,7 @@ let pool = mysql
   .createPool({
     host: "localhost",
     user: "scadet",
-    database: "nodelogin",
+    database: "esc_proj",
     password: "pw123",
     connectionLimit: 10,
   }).promise();
