@@ -1,5 +1,6 @@
 const db = require('./db.js');
 const tableName = 'appraisalform';
+const employeetable = 'employee';
 
 class AppraisalForm {
   constructor() {
@@ -75,19 +76,38 @@ async function sync() {
   }
 }
 
-async function form() {
+// /form/retrieve. NEED TO DELETE?
+async function blank_form() {
     return new AppraisalForm();
 }
 
 //appraisalform is an AppraisalForm object with the fields filled up accordingly.
-async function insertOne(appraisalForm) {
-  if (!appraisalForm || !appraisalForm.employeeID) {
-    throw new Error("Invalid appraisal form data");
+// /form/employee/submit
+async function insertOne(employeeID, formfields) {
+  if (formfields.length != 50) {
+    throw new Error("insertOne: something wrong with formfields length, it is " + formfields.length);
   }
+  
+  let managerID;
+  // Query for managerID
+  try {
+    const query = `SELECT managerID FROM ${employeetable} WHERE employeeID = ?`;
+    const result = await db.query(query, [employeeID]);
+    if (result.length > 0) {
+      managerID = result[0].managerID;
+    } else {
+      throw new Error("insertOne: Can't obtain managerID with employeeID:" + employeeID); // No matching employee found
+    }
+  } catch (error) {
+    console.error("Error fetching manager ID:", error);
+    throw error; // Rethrow or handle as needed
+  }
+
+  // Updating appraisalForm table
   try {
     const query = `
       INSERT INTO ${tableName} (
-        formID, employeeID, statusEmployee, statusHOD, formDateUploaded, 
+        employeeID, managerID, statusEmployee, statusHOD, formDateUploaded, 
         a1, a2_1, a2_2, a2_3, a2_4, a2_5, a2_6, a2_7, a2_8, 
         a3_1, commentsA3_1, a3_2, commentsA3_2, a3_3, commentsA3_3, 
         a3_4, commentsA3_4, a3_5, commentsA3_5, a3_6, commentsA3_6, 
@@ -96,38 +116,95 @@ async function insertOne(appraisalForm) {
         a3_13, commentsA3_13, a3_14, commentsA3_14, a3_15, commentsA3_15, 
         a3_16, commentsA3_16, a3_17, commentsA3_17, a3_18, commentsA3_18, 
         a3_19, commentsA3_19, a3_20, commentsA3_20, b
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const values = [
-      appraisalForm.formID, appraisalForm.employeeID, appraisalForm.statusEmployee, appraisalForm.statusHOD, appraisalForm.formDateUploaded, 
-      appraisalForm.a1, appraisalForm.a2_1, appraisalForm.a2_2, appraisalForm.a2_3, appraisalForm.a2_4, appraisalForm.a2_5, appraisalForm.a2_6, appraisalForm.a2_7, appraisalForm.a2_8, 
-      appraisalForm.a3_1, appraisalForm.commentsA3_1, appraisalForm.a3_2, appraisalForm.commentsA3_2, appraisalForm.a3_3, appraisalForm.commentsA3_3, 
-      appraisalForm.a3_4, appraisalForm.commentsA3_4, appraisalForm.a3_5, appraisalForm.commentsA3_5, appraisalForm.a3_6, appraisalForm.commentsA3_6, 
-      appraisalForm.a3_7, appraisalForm.commentsA3_7, appraisalForm.a3_8, appraisalForm.commentsA3_8, appraisalForm.a3_9, appraisalForm.commentsA3_9, 
-      appraisalForm.a3_10, appraisalForm.commentsA3_10, appraisalForm.a3_11, appraisalForm.commentsA3_11, appraisalForm.a3_12, appraisalForm.commentsA3_12, 
-      appraisalForm.a3_13, appraisalForm.commentsA3_13, appraisalForm.a3_14, appraisalForm.commentsA3_14, appraisalForm.a3_15, appraisalForm.commentsA3_15, 
-      appraisalForm.a3_16, appraisalForm.commentsA3_16, appraisalForm.a3_17, appraisalForm.commentsA3_17, appraisalForm.a3_18, appraisalForm.commentsA3_18, 
-      appraisalForm.a3_19, appraisalForm.commentsA3_19, appraisalForm.a3_20, appraisalForm.commentsA3_20, appraisalForm.b
-    ];
-
-    const [rows, fieldDefs] = await db.pool.query(query, values);
+    const values = [employeeID, managerID, true, false, new Date(), ...formfields];
+    await db.pool.query(query, values);
+    return true;
   } catch (error) {
-    console.error("database connection failed. Problem: insertOne(appraisalForm)! " + error);
-    throw error;
+    console.error("Database connection failed. Problem: insertOne(appraisalForm)! " + error);
+    throw error; // Rethrow or handle as needed
   }
 }
 
-async function retrieveForm(formID){
+
+//retrieveForm returns ONE SINGULAR FORM to be FILLED UP
+async function retrieveForm(employeeID){
   try{
-    const [rows, fieldDefs] = await db.pool.query(
-      `SELECT * from ${tableName} where FormID = ${formID}`
-    );
-  
-    const form = new AppraisalForm(rows[0]);
-    return form; 
+    const curr_year = new Date().getFullYear();
+    const query = `
+      SELECT * 
+      FROM ${tableName} 
+      WHERE employeeID = ? 
+        AND YEAR(FormDateUploaded) = ?
+    `;
+
+    //rows is an array of data
+    const [rows] = await db.pool.query(query, [employeeID, curr_year]);
+
+    // slice 5 cause we only want to give the columns pertaining to the questions in the form
+    return rows
   } 
   catch (error) {
-    throw new Error('Form not formed');
+    throw new Error('Form not retrieved');
   }
 }
 
+
+// /form/HOD/submit
+async function updateOne(formID, formfields) {
+  if (formfields.length != 52) {
+    throw new Error("updateOne: formfields length is not 52, it is " + formfields.length);
+  }
+  const curr_year = new Date().getFullYear();
+
+  try {
+    // we dont insert into formID cause that'll be auto generated
+    const query = `
+    UPDATE ${tableName} SET
+    statusHOD = ?, formDateUploaded = ?, 
+    a1 = ?, a2_1 = ?, a2_2 = ?, a2_3 = ?, a2_4 = ?, a2_5 = ?, a2_6 = ?, a2_7 = ?, a2_8 = ?, 
+    a3_1 = ?, commentsA3_1 = ?, a3_2 = ?, commentsA3_2 = ?, a3_3 = ?, commentsA3_3 = ?, 
+    a3_4 = ?, commentsA3_4 = ?, a3_5 = ?, commentsA3_5 = ?, a3_6 = ?, commentsA3_6 = ?, 
+    a3_7 = ?, commentsA3_7 = ?, a3_8 = ?, commentsA3_8 = ?, a3_9 = ?, commentsA3_9 = ?, 
+    a3_10 = ?, commentsA3_10 = ?, a3_11 = ?, commentsA3_11 = ?, a3_12 = ?, commentsA3_12 = ?, 
+    a3_13 = ?, commentsA3_13 = ?, a3_14 = ?, commentsA3_14 = ?, a3_15 = ?, commentsA3_15 = ?, 
+    a3_16 = ?, commentsA3_16 = ?, a3_17 = ?, commentsA3_17 = ?, a3_18 = ?, commentsA3_18 = ?, 
+    a3_19 = ?, commentsA3_19 = ?, a3_20 = ?, commentsA3_20 = ?, b = ?
+    WHERE formID = ? AND YEAR(FormDateUploaded) = ?
+    `;
+    // Add formID and current year to the values array
+    const values = [...formfields, formID, curr_year]
+
+    await db.pool.query(query, values);
+    return true;
+  } catch (error) {
+    console.error("database connection failed. Problem: insertOne(formID, formfields)! " + error);
+    return false
+  }
+}
+
+
+// /form/HOD/status
+// returns an array where each element is an array that represents a form
+async function retrieveAllForms(managerID){
+  const curr_year = new Date().getFullYear();
+  try{
+    // get table entries based on managerID and current year.
+    const query = `
+      SELECT EmployeeID, ManagerID, StatusEmployee, StatusHOD, FormDateUploaded 
+      FROM ${tableName}
+      WHERE ManagerID = ?
+      AND YEAR(FormDateUploaded) = ?
+
+    `;
+
+    //rows is an array of data. 
+    const [rows] = await db.pool.query(query, [managerID, curr_year]);
+    return rows
+
+  } 
+  catch (error) {
+    throw new Error('Form not retrieved, problem with retrieveAllForms');
+  }
+}
