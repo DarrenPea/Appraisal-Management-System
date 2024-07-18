@@ -1,8 +1,6 @@
 const db = require('./db.js');
 const tableName = 'hod';
-const staffTable = require('./employee.js');
 const staffTableName = 'employees'
-const appraisalTable = require('./appraisalform.js');
 const appraisalTableName = 'appraisalform';
 
 class HOD {
@@ -211,4 +209,4 @@ async function retrieve_employeeData(staffID) {
     }
 }
 
-  module.exports =  { HOD, login, retrieve_indivForm, retrieve_allforms, submit_indivForm, retrieve_employeeData}
+module.exports =  { HOD, login, retrieve_indivForm, retrieve_allforms, submit_indivForm, retrieve_employeeData}
