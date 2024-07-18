@@ -4,13 +4,30 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser');
+var process = require('process');
+var db = require('./models/db.js');
+
+var employeeModel = require('./models/employee.js');
+var formModel = require('../models/appraisalform.js');
+
+employeeModel.sync();
+formModel.sync();
+
+process.on('SIGINT', db.cleanup);
+process.on('SIGTERM', db.cleanup);
+
 
 var indexRouter = require('./routes/index');
+var formRouter = require('./routes/appraisalform');
+var employeeRouter = require('./routes/employee');
 
 var app = express();
 
 const db = require("./models/db")
 const session = require('express-session');
+
+require('./tasks/server_clock.js'); 
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,6 +49,8 @@ app.use(session({
 }));
 //direct to login page first
 app.use('/', indexRouter);
+// TODO when finalize 
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
