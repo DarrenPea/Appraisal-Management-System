@@ -112,7 +112,7 @@ class Employee {
     }
   }
 
-  async function findByAppraisalDateDue(staffID) {
+  async function findByAppraisalDateDue() {
     try {
       const today = new Date();
       const currentMonth = today.getMonth() + 1;
