@@ -6,6 +6,23 @@ exports.renderLogin = (req, res) => {
     res.render('login', { title: 'LoginPage', alerMessage: '' });
 };
 
+exports.renderHome = (req, res) => {
+    if (req.session.loggedin) {
+        // res.send('Welcome back, ' + req.session.username + '!');
+		//check if username is hod or employee, and render the relevant pages
+        if (req.session.username=="testhod") {
+            const hodName = req.session.username;
+            res.render('hodhome', {title: "Welcome HOD", hodName});
+        }else {
+            const employeeName = req.session.username;
+            res.render('employeehome', {title: "Welcome Employee", employeeName});
+        }
+    } else {
+        res.send('Please login to view this page!');
+    }
+    res.end();
+};
+
 //to authenticate user
 
 // exports.authenticateUser = (req, res) => {
@@ -64,14 +81,30 @@ exports.renderLogin = (req, res) => {
 
 //to direct to diff home page for employee and hod
 
-//TEST:update form
+//TEST:update form (INCOMPLETE)
+// exports.authenticateUser = async (req, res) => {
+//     console.log("testing3 here");
+//     const { username, password } = req.body;
+
+//     try {
+//         await testlogin.submit_indivForm(req, res);
+//         console.log("submitted successfully");
+//         // res.redirect('/home');
+//     } catch (error) {
+//         console.error('Error retrieving forms:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// };
+
+
+//TEST: retrieve employee data
 exports.authenticateUser = async (req, res) => {
-    console.log("testing3 here");
+    console.log("testing4 here");
     const { username, password } = req.body;
 
     try {
-        await testlogin.submit_indivForm(req, res);
-        console.log("submitted successfully");
+        const testing = await testlogin.retrieve_employeeData(username);
+        console.log(testing);
         // res.redirect('/home');
     } catch (error) {
         console.error('Error retrieving forms:', error);
@@ -79,19 +112,4 @@ exports.authenticateUser = async (req, res) => {
     }
 };
 
-exports.renderHome = (req, res) => {
-    if (req.session.loggedin) {
-        // res.send('Welcome back, ' + req.session.username + '!');
-		//check if username is hod or employee, and render the relevant pages
-        if (req.session.username=="testhod") {
-            const hodName = req.session.username;
-            res.render('hodhome', {title: "Welcome HOD", hodName});
-        }else {
-            const employeeName = req.session.username;
-            res.render('employeehome', {title: "Welcome Employee", employeeName});
-        }
-    } else {
-        res.send('Please login to view this page!');
-    }
-    res.end();
-};
+

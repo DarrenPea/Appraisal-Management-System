@@ -1,6 +1,7 @@
 const db = require('./db.js');
 const tableName = 'hod';
 const staffTable = require('./employee.js');
+const staffTableName = 'employees'
 const appraisalTable = require('./appraisalform.js');
 const appraisalTableName = 'appraisalform';
 
@@ -129,27 +130,48 @@ async function retrieve_indivForm(staffID) {
     }
 }
 
+/* 
+routename: form/HOD/submit
+Havent tested
+
+data to be passed in this form
+{
+    "staffID": "someStaffID",
+    "a1": "value1",
+    "a2": "value2",
+    "a3": "value3",
+    "a4": "value4",
+    ...
+}
+*/
 //routename: form/HOD/submit
-//Incmplete
 async function submit_indivForm(req, res) {
   try {
       // Extract staffID and the rest of the form data
-      //TODO: change
-      const { staffID, formData } = req.body;
+      const { staffID, ...formData } = req.body;
 
-      console.log(formData);
+      // Check if formData is properly extracted
+      console.log('Form data:', formData);
+
       // Get the column names from the appraisalTableName
       const [columns] = await db.pool.query(`SHOW COLUMNS FROM ${appraisalTableName}`);
       
-      //index for first qn that hod need to fill up
+      // Index for the first question that HOD needs to fill up
       const hodstart_qn = 7;
 
-      // Extract column names starting from index 10 onwards
+      // Extract column names starting from index 7 onwards
       const columnNames = columns.slice(hodstart_qn).map(col => col.Field);
       
-      // Extract values from formData that correspond to the columns starting from index 10 onwards
+      // Extract values from formData that correspond to the columns starting from index 7 onwards
       const values = columnNames.map(col => formData[col]);
-      
+
+      // Check for undefined values
+      values.forEach((value, index) => {
+          if (value === undefined) {
+              console.log(`Value for column ${columnNames[index]} is undefined`);
+          }
+      });
+
       // Construct the SET clause for the UPDATE query
       const setClause = columnNames.map(col => `${col} = ?`).join(', ');
 
@@ -157,7 +179,7 @@ async function submit_indivForm(req, res) {
       const query = `UPDATE ${appraisalTableName} SET ${setClause} WHERE EmployeeID = ?`;
 
       // Execute the query
-      await db.pool.query(query, [formData, staffID]);
+      await db.pool.query(query, [...values, staffID]);
       
       res.status(200).send('Form submitted successfully');
   } catch (error) {
@@ -166,4 +188,27 @@ async function submit_indivForm(req, res) {
   }
 }
 
-  module.exports =  { HOD, login, retrieve_indivForm, retrieve_allforms, submit_indivForm}
+//routename: employee/details
+async function retrieve_employeeData(staffID) {
+  //TODO: add additional params to appraisalform table
+    try {
+        // Extract the first 5 column names
+        //TODO: change to a new column name called EmployeeData
+        const columnName = 'EmployeeEmail';
+        // const columnName = employee_KPI;
+
+        //get from database based on the column names
+        //TODO: change EmployeeID to ManagerID, since we want all forms under HOD
+        const [rows] = await db.pool.query(
+          `SELECT ${columnName} FROM ${staffTableName} WHERE EmployeeID = ?`,
+          [staffID]
+      );
+        return rows;
+
+    } catch (error) {   
+        console.error('Failed to retrieve employee data: ' + error.message);
+        throw error;
+    }
+}
+
+  module.exports =  { HOD, login, retrieve_indivForm, retrieve_allforms, submit_indivForm, retrieve_employeeData}
