@@ -73,8 +73,8 @@ async function sync() {
         managerID INT,
         statusEmployee BOOLEAN,
         statusHOD BOOLEAN,
-        dateCreated DATETIME,
-        lastUpdated DATETIME,
+        dateCreated DATE,
+        lastUpdated DATE,
         a1 VARCHAR(255),
         a2_1 VARCHAR(255),
         a2_2 VARCHAR(255),
@@ -244,5 +244,20 @@ async function retrieveForHR(){
   } 
   catch (error) {
     throw new Error('Form not retrieved, problem with retrieveForHR');
+  }
+}
+
+async function createEntry(employeeID, managerID){
+  try{
+    const query = `
+      INSERT INTO ${tableName} (employeeID, managerID, statusEmployee, statusHOD, dateCreated, lastUpdated) 
+      VALUES (?, ?, false, false, NOW(), NOW())
+    `;
+
+    await db.pool.query(query, [employeeID, managerID]);
+    return true
+  } 
+  catch (error) {
+    throw new Error('Form not created');
   }
 }
