@@ -9,7 +9,8 @@ var debug = require('debug')('esc-backend:server');
 var http = require('http');
 
 const cron = require('node-cron');
-const { spawn } = require('child_process');
+const serverClock = require('../tasks/server_clock.js');
+
 
 /**
  * Get port from environment and store in Express.
@@ -30,21 +31,11 @@ var server = http.createServer(app);
  * Adjust the cron schedule as needed.
  */
 
-cron.schedule('0 0 1 * *', () => {
-  const process = spawn('node', ['tasks/server_clock.js']);
 
-  process.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-  });
 
-  process.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  process.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
-});
+// cron.schedule(minute, hour, day of month, month, day of week)
+// clock will schedule on the first day of every month to assign appraisal to employee 
+cron.schedule('0 0 1 * *', serverClock.checkForAppraisal); // Schedule the function
 
 
 /**
