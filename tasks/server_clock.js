@@ -12,7 +12,7 @@ async function checkForAppraisal() {
         const employees = await employeeModel.findByAppraisalDateDue();
         for (const employee of employees) {
             const {employeeID, managerID} = employee;
-            await employeeModel.updateNextAppraisalDate()
+            await employeeModel.updateNextAppraisalDate(employeeID)
             await formModel.createEntry(employeeID, managerID);
         }
     } catch(error) {
