@@ -1,5 +1,6 @@
 const db = require('../models/db');
-const testlogin = require('../models/hod')
+const testlogin = require('../models/hod'); //test hod
+const testhr = require('../models/hr');
 
 //to render the login page
 exports.renderLogin = (req, res) => {
@@ -23,7 +24,7 @@ exports.renderHome = (req, res) => {
     res.end();
 };
 
-//to authenticate user
+//Test hod
 
 // exports.authenticateUser = (req, res) => {
 //     const { username, password } = req.body;
@@ -54,13 +55,28 @@ exports.renderHome = (req, res) => {
 // 	}
 // };
 
-//TEST:login
+// TEST:login
 // exports.authenticateUser = (req, res) => {
 // 	console.log("testing here");
 // 	const { username, password } = req.body;
 // 	const tester = testlogin.login(username, password);
 // 	res.redirect('/home');
 // }
+
+//TEST: get all form list
+// exports.authenticateUser = async (req, res) => {
+//     console.log("testing1 here");
+//     const { username, password } = req.body;
+
+//     try {
+//         const tester = await testlogin.retrieve_allforms(username);
+//         console.log(tester);
+//         // res.redirect('/home');
+//     } catch (error) {
+//         console.error('Error retrieving forms:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// };
 
 //TEST: get all form details
 // exports.authenticateUser = async (req, res) => {
@@ -98,18 +114,27 @@ exports.renderHome = (req, res) => {
 
 
 //TEST: retrieve employee data
-exports.authenticateUser = async (req, res) => {
-    console.log("testing4 here");
-    const { username, password } = req.body;
+// exports.authenticateUser = async (req, res) => {
+//     console.log("testing4 here");
+//     const { username, password } = req.body;
 
-    try {
-        const testing = await testlogin.retrieve_employeeData(username);
-        console.log(testing);
-        // res.redirect('/home');
-    } catch (error) {
-        console.error('Error retrieving forms:', error);
-        res.status(500).send('Internal Server Error');
-    }
-};
+//     try {
+//         const testing = await testlogin.retrieve_employeeData(username);
+//         console.log(testing);
+//         // res.redirect('/home');
+//     } catch (error) {
+//         console.error('Error retrieving forms:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// };
 
-
+/*
+Test hr
+*/
+// TEST:login
+exports.authenticateUser = (req, res) => {
+	console.log("testhr1 here");
+	const { username, password } = req.body;
+	const tester = testhr.login(username, password);
+	res.redirect('/home');
+}

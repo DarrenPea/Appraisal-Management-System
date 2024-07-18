@@ -91,7 +91,7 @@ async function retrieve_allforms(hodID) {
         // Extract the first 5 column names
         const columnNames = columns.slice(0, 5).map(col => col.Field).join(', ');
 
-        //get from database based on the column names
+        //get from appraisalfomr table database based on the column names
         //TODO: change EmployeeID to ManagerID, since we want all forms under HOD
         const [rows] = await db.pool.query(
           `SELECT ${columnNames} FROM ${appraisalTableName} WHERE EmployeeID = ?`,
