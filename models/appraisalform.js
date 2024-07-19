@@ -4,7 +4,7 @@ const tableName = 'appraisalform';
 class AppraisalForm {
     constructor(
       formID,
-      employeeID,
+      staffID,
       statusEmployee,
       statusHOD,
       formDateUploaded,
@@ -60,7 +60,7 @@ class AppraisalForm {
       b
     ) {
       this.formID = formID;
-      this.employeeID = employeeID;
+      this.staffID = staffID;
       this.statusEmployee = statusEmployee;
       this.statusHOD = statusHOD;
       this.formDateUploaded = formDateUploaded;

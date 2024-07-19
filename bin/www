@@ -8,6 +8,10 @@ var app = require('../app');
 var debug = require('debug')('esc-backend:server');
 var http = require('http');
 
+const cron = require('node-cron');
+const serverClock = require('../tasks/server_clock.js');
+
+
 /**
  * Get port from environment and store in Express.
  */
@@ -20,6 +24,19 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+
+/**
+ * Schedule server_clock.js using cron.
+ * Adjust the cron schedule as needed.
+ */
+
+
+
+// cron.schedule(minute, hour, day of month, month, day of week)
+// clock will schedule on the first day of every month to assign appraisal to employee 
+cron.schedule('0 0 1 * *', serverClock.checkForAppraisal); // Schedule the function
+
 
 /**
  * Listen on provided port, on all network interfaces.
