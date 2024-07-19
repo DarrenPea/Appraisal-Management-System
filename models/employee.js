@@ -4,7 +4,7 @@ const tableName = 'employees';
 class Employee {
     constructor(
       staffID,
-      managerID,
+      hodID,
       employeePassword,
       employeeName,
       employeeEmail,
@@ -20,7 +20,7 @@ class Employee {
       attendanceRecord
     ) {
       this.staffID = staffID;
-      this.managerID = managerID;
+      this.hodID = hodID;
       this.employeePassword = employeePassword;
       this.employeeName = employeeName;
       this.employeeEmail = employeeEmail;
@@ -42,7 +42,7 @@ class Employee {
       await db.pool.query(`
         CREATE TABLE IF NOT EXISTS ${tableName} (
           staffID VARCHAR(50) PRIMARY KEY,
-          managerID VARCHAR(50) PRIMARY KEY,
+          hodID VARCHAR(50) PRIMARY KEY,
           employeePassword VARCHAR(255),
           employeeName VARCHAR(255),
           employeeEmail VARCHAR(255),
@@ -95,7 +95,7 @@ class Employee {
       const currentMonth = today.getMonth() + 1;
 
       // Query to get employees whose next appraisal month is the current month
-      const [employees] = await db.pool.query(`SELECT employeeID, managerID FROM employees where MONTH(nextAppraisalDate) = ?`, [currentMonth]);
+      const [employees] = await db.pool.query(`SELECT employeeID, hodID FROM employees where MONTH(nextAppraisalDate) = ?`, [currentMonth]);
       return employees;
       } catch (error) {
         console.error('Error finding employees by appraisal date:', error);
@@ -190,7 +190,7 @@ async function login(username, password) {
 
 async function hrStatus(employeeID){
   try{
-    // get table entries based on managerID and current year.
+    // get table entries based on hodID and current year.
     const query = `
       SELECT employeeName, department
       FROM ${tableName}
