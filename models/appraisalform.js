@@ -7,6 +7,7 @@ class AppraisalForm {
   constructor() {
     this.formID = null;
     this.employeeID = null;
+    this.hodID = null;
     this.statusEmployee = null;
     this.statusHOD = null;
     this.dateCreated = null;
@@ -70,7 +71,7 @@ async function sync() {
       CREATE TABLE IF NOT EXISTS ${tableName} (
         formID INT AUTO_INCREMENT PRIMARY KEY,
         employeeID INT NOT NULL,
-        managerID INT,
+        hodID INT,
         statusEmployee BOOLEAN,
         statusHOD BOOLEAN,
         dateCreated DATE,
@@ -148,7 +149,6 @@ async function employeeStatus(employeeID) {
     console.error("Error fetching form: ", error);
     throw error;
   }
-
 }
 
 //retrieveForm returns ONE SINGULAR FORM to be FILLED UP
@@ -206,20 +206,20 @@ async function updateForm(formID, formfields, statusHOD = false) {
 
 // /form/HOD/status
 // returns an array where each element is an array that represents a form
-async function hodStatus(managerID){
+async function hodStatus(hodID){
   const curr_year = new Date().getFullYear();
   const curr_month = new Date().getMonth() + 1; // JavaScript months are 0-indexed, SQL months are 1-indexed
 
   try{
-    // get table entries based on managerID and current year.
+    // get table entries based on hodID and current year.
     const query = `
       SELECT formID, employeeID, statusEmployee, statusHOD, appraisalType, dueDate 
       FROM ${tableName}
-      WHERE managerID = ?
+      WHERE hodID = ?
       AND YEAR(dateCreated) = ? AND MONTH(dateCreated) = ?
     `;
     //rows is an array of data. 
-    const [rows] = await db.pool.query(query, [managerID, curr_year, curr_month]);
+    const [rows] = await db.pool.query(query, [hodID, curr_year, curr_month]);
     return rows
 
   } 
@@ -234,7 +234,7 @@ async function hrStatus(){
     const curr_year = new Date().getFullYear();
     const curr_month = new Date().getMonth() + 1; // JavaScript months are 0-indexed, SQL months are 1-indexed
     const query = `
-      SELECT formID, employeeID, managerID, statusEmployee, statusHOD, lastUpdated 
+      SELECT formID, employeeID, hodID, statusEmployee, statusHOD, lastUpdated 
       FROM ${tableName}
       WHERE YEAR(FormDateUploaded) = ? AND MONTH(FormDateUploaded) = ?
     `;
@@ -248,14 +248,14 @@ async function hrStatus(){
   }
 }
 
-async function createEntry(employeeID, managerID){
+async function createEntry(employeeID, hodID){
   try{
     const query = `
-      INSERT INTO ${tableName} (employeeID, managerID, statusEmployee, statusHOD, dateCreated, lastUpdated) 
+      INSERT INTO ${tableName} (employeeID, hodID, statusEmployee, statusHOD, dateCreated, lastUpdated) 
       VALUES (?, ?, false, false, NOW(), NOW())
     `;
 
-    await db.pool.query(query, [employeeID, managerID]);
+    await db.pool.query(query, [employeeID, hodID]);
     return true
   } 
   catch (error) {
