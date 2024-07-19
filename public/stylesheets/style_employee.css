@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+	height: 80%;
+	max-height: 800px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+header h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+	text-align: left;
+}
+
+.appraisal-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.appraisal-header h2 {
+    background-color: #f8d7da;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+table {
+    width: 90%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+}
+
+th {
+    font-weight: bold;
+}
+
+td {
+	border: 1.5px solid black;
+}
+
+td:last-child {
+    text-align: center;
+    width: 10%;
+}
+
+.status-pending {
+    color: red;
+}
+
+.fill-up-btn {
+    background-color: white;
+    border: 1.5px solid black;
+    border-radius: 5px;
+    padding: 5px 15px;
+    cursor: pointer;
+	font-size: 0.9em;
+}
+
+.fill-up-btn:hover {
+    background-color: #f0f0f0;
+}

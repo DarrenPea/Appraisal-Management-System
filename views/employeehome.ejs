@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Appraisals</title>
+    <link rel="stylesheet" href="/stylesheets/style_employee.css">
+    <style>
+        .form-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .form-container.active {
+            display: block;
+        }
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-container form input {
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 16px;
+        }
+        .form-container form button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .no-actions {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }
+        .no-actions.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>WELCOME, <%= employeeName %></h1>
+        </header>
+        <main>
+            <div class="appraisal-header">
+                <h2>Pending Appraisals:</h2>
+            </div>
+            <table id="appraisalTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sarah Lee</td>
+                        <td>Yearly</td>
+                        <td>11/1/24</td>
+                        <td class="status-pending">Pending</td>
+                        <td><button class="fill-up-btn">Fill up</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="form-container" id="appraisalForm">
+                <h2>Appraisal Form for Sarah Lee</h2>
+                <form id="appraisalFormForm" action="/submit-appraisal" method="POST">
+                    <label for="employeeName">Employee Name:</label>
+                    <input type="text" id="employeeName" name="employeeName" value="Sarah Lee" readonly>
+
+                    <label for="appraisalType">Appraisal Type:</label>
+                    <input type="text" id="appraisalType" name="appraisalType" value="Yearly" readonly>
+
+                    <label for="appraisalDate">Select Appraisal Date:</label>
+                    <input type="date" id="appraisalDate" name="appraisalDate" required>
+
+                    <label for="appraisalTime">Select Appraisal Time:</label>
+                    <input type="time" id="appraisalTime" name="appraisalTime" required>
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+            <div class="no-actions" id="noActionsMessage">
+                No further actions are needed at this time.
+            </div>
+        </main>
+    </div>
+    <script>
+        document.querySelectorAll('.fill-up-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('appraisalForm').classList.add('active');
+            });
+        });
+
+        document.getElementById('appraisalFormForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Here you would typically handle form submission to the server
+
+            // Get the form values
+            const employeeName = document.getElementById('employeeName').value;
+            const appraisalType = document.getElementById('appraisalType').value;
+            const appraisalDate = document.getElementById('appraisalDate').value;
+            const appraisalTime = document.getElementById('appraisalTime').value;
+
+            // Show a confirmation popup with the details
+            alert(`You have successfully added your appointment!\n\nEmployee Name: ${employeeName}\nAppraisal Type: ${appraisalType}\nAppraisal Date: ${appraisalDate}\nAppraisal Time: ${appraisalTime}`);
+            
+            // Hide the form and the pending appraisal row
+            document.getElementById('appraisalForm').classList.remove('active');
+            document.getElementById('appraisalFormForm').reset();
+            document.getElementById('appraisalTable').style.display = 'none';
+            
+            // Show the no actions message
+            document.getElementById('noActionsMessage').classList.add('active');
+        });
+    </script>
+</body>
+</html>
+
