@@ -3,18 +3,18 @@ const tableName = 'hod';
 
 class HOD {
     constructor(
-      managerID,
-      managerPassword,
-      managerName,
-      managerEmail,
-      managerDepartment,
+      hodID,
+      hodPassword,
+      hodName,
+      hodEmail,
+      hodDepartment,
       role
     ) {
-      this.managerID = managerID;
-      this.managerPassword = managerPassword;
-      this.managerName = managerName;
-      this.managerEmail = managerEmail;
-      this.managerDepartment = managerDepartment;
+      this.hodID = hodID;
+      this.hodPassword = hodPassword;
+      this.hodName = hodName;
+      this.hodEmail = hodEmail;
+      this.hodDepartment = hodDepartment;
       this.role = role;
     }
   }
@@ -23,11 +23,11 @@ class HOD {
     try { 
         db.pool.query(`
         CREATE TABLE IF NOT EXISTS ${tableName} (
-            ManagerID VARCHAR(255) PRIMARY KEY,
-            ManagerPassword VARCHAR(255) NOT NULL,
-            ManagerName VARCHAR(255) NOT NULL,
-            ManagerEmail VARCHAR(255) NOT NULL,
-            ManagerDepartment VARCHAR(255),
+            hodID VARCHAR(255) PRIMARY KEY,
+            hodPassword VARCHAR(255) NOT NULL,
+            hodName VARCHAR(255) NOT NULL,
+            hodEmail VARCHAR(255) NOT NULL,
+            hodDepartment VARCHAR(255),
             Role VARCHAR(255)
         )
         `);
@@ -41,7 +41,7 @@ class HOD {
 async function login(username, password) {
     try {
       const [rows] = await db.pool.query(
-        `SELECT * FROM ${tableName} WHERE managerID = ?`,
+        `SELECT * FROM ${tableName} WHERE hodID = ?`,
         [username]
       );
   
@@ -55,9 +55,9 @@ async function login(username, password) {
       const user = rows[0];
   
       // Compare the provided password with the stored hashed password
-      const isPasswordValid = password === user.managerPassword;
+      const isPasswordValid = password === user.hodPassword;
       //TODO: add encryption to password
-    //   const isPasswordValid = await bcrypt.compare(password, user.ManagerPassword);
+    //   const isPasswordValid = await bcrypt.compare(password, user.hodPassword);
 
   
       if (!isPasswordValid) {
@@ -72,8 +72,8 @@ async function login(username, password) {
       return {
         valid_user: true,
         user: {
-          managerID: user.managerID,
-          managerName: user.managerName,
+          hodID: user.hodID,
+          hodName: user.hodName,
           role: user.role,
         }
       };

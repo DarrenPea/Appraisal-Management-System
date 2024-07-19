@@ -22,7 +22,7 @@ process.on('SIGTERM', db.cleanup);
 
 
 var indexRouter = require('./routes/index.js');
-// var formRouter = require('./routes/appraisalform');
+var formRouter = require('./routes/appraisalform');
 var employeeRouter = require('./routes/employee.js');
 
 var app = express();

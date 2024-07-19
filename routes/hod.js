@@ -15,8 +15,8 @@ router.post('/hod/login', async (req, res, next) => {
           user: result.user,
           /*
           result.user contains the below
-          managerID: user.managerID,
-          managerName: user.managerName,
+          hodID: user.hodID,
+          hodName: user.hodName,
           role: user.role,
           */
         });
