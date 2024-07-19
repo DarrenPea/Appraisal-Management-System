@@ -75,6 +75,8 @@ async function sync() {
         statusHOD BOOLEAN,
         dateCreated DATE,
         lastUpdated DATE,
+        appraisalType VARCHAR(255),
+        dueDate DATE, 
         a1 VARCHAR(255),
         a2_1 VARCHAR(255),
         a2_2 VARCHAR(255),
@@ -133,20 +135,21 @@ async function sync() {
   }
 }
 
-// /form/employee/retrieve
-async function retrieve(employeeID) {
+// /form/employee/status
+// checks if there is a form assigned to employee in current month
+async function employeeStatus(employeeID) {
   try {
     const curr_year = new Date().getFullYear();
     const curr_month = new Date().getMonth() + 1; // JavaScript months are 0-indexed, SQL months are 1-indexed
-    const query = `SELECT formID FROM ${tableName} WHERE employeeID = ? AND YEAR(dateCreated) = ? AND MONTH(dateCreated) = ?`;
+    const query = `SELECT formID, statusEmployee, appraisalType, dueDate FROM ${tableName} WHERE employeeID = ? AND YEAR(dateCreated) = ? AND MONTH(dateCreated) = ?`;
     const [rows] = await db.pool.query(query, [employeeID, curr_year, curr_month]);
     return rows;  
   } catch (error) {
     console.error("Error fetching form: ", error);
     throw error;
   }
-}
 
+}
 
 //retrieveForm returns ONE SINGULAR FORM to be FILLED UP
 async function retrieveForm(formID){
@@ -158,9 +161,9 @@ async function retrieveForm(formID){
     `;
 
     //rows is an array of data
-    const [rows] = await db.pool.query(query, [formID]);
+    const [row] = await db.pool.query(query, [formID]);
 
-    return rows
+    return row
   } 
   catch (error) {
     throw new Error('Form not retrieved');
@@ -168,7 +171,7 @@ async function retrieveForm(formID){
 } 
 
 // /form/HOD/submit
-async function updateOne(formID, formfields, statusHOD = false) {
+async function updateForm(formID, formfields, statusHOD = false) {
   if (formfields.length != 50) {
     throw new Error("updateOne: formfields length is not 50, it is " + formfields.length);
   }
@@ -203,20 +206,18 @@ async function updateOne(formID, formfields, statusHOD = false) {
 
 // /form/HOD/status
 // returns an array where each element is an array that represents a form
-async function retrieveForHOD(managerID){
+async function hodStatus(managerID){
   const curr_year = new Date().getFullYear();
   const curr_month = new Date().getMonth() + 1; // JavaScript months are 0-indexed, SQL months are 1-indexed
 
   try{
     // get table entries based on managerID and current year.
     const query = `
-      SELECT formID, employeeID, managerID, statusEmployee, statusHOD, lastUpdated 
+      SELECT formID, employeeID, statusEmployee, statusHOD, appraisalType, dueDate 
       FROM ${tableName}
       WHERE managerID = ?
       AND YEAR(dateCreated) = ? AND MONTH(dateCreated) = ?
-
     `;
-
     //rows is an array of data. 
     const [rows] = await db.pool.query(query, [managerID, curr_year, curr_month]);
     return rows
@@ -228,7 +229,7 @@ async function retrieveForHOD(managerID){
 }
 
 // /form/HR/status
-async function retrieveForHR(){
+async function hrStatus(){
   try{
     const curr_year = new Date().getFullYear();
     const curr_month = new Date().getMonth() + 1; // JavaScript months are 0-indexed, SQL months are 1-indexed
@@ -261,3 +262,5 @@ async function createEntry(employeeID, managerID){
     throw new Error('Form not created');
   }
 }
+
+
