@@ -1,9 +1,10 @@
 const express = require('express');
-const employeeModel = require('./models/employee.js');
+const employeeModel = require('../models/employee.js');
 var router = express.Router();
 
 // Enable CORS for all routes
-router.use(cors({ origin: 'http://localhost:5000' })); // Change port based on FE React port
+//added in app.js already
+// router.use(cors({ origin: 'http://localhost:5000' })); // Change port based on FE React port
 
 
 // AJAX end points
@@ -54,6 +55,53 @@ router.post('/employee/details/', async (req, res, next) => {
       res.status(404).send(JSON.stringify({ message: 'Employee not found' }));
     }
   });
+
+  router.post("/HR/status", async(req,res) => { 
+    try{
+    const employeeID = req.body;
+    const form = await employeeModel.hrStatus(employeeID);
+    if (form == []){
+        return res.status(404).json({ message: "Entry not found" });
+    }
+    res.send(JSON.stringify(form));
+    }catch(error){
+        console.error(error);
+        res.status(404).send(JSON.stringify({ message: 'problem with /form/completed' }));
+    }
+});
+
+router.post('/employee/login', async (req, res, next) => {
+  const { employeeID, employeePassword } = req.body;
+
+  try {
+    const result = await employeeModel.login(employeeID, employeePassword);
+    
+    //if valid user
+    if (result.valid_user) {
+      res.status(200).json({
+        verified: true,
+        user: result.user,
+        /*
+        result.user contains the below
+        employee_ID: user.employeeID,
+        employee_Name: user.employeeName,
+        role: user.role,
+        */
+      });
+    } else {
+      res.status(401).json({
+        verified: false,
+        user: null,
+      });
+    }
+  } catch (error) {
+    console.error('Error during login process:', error);
+    res.status(500).json({
+      verified: false,
+        user: null,
+    });
+  }
+});
 
   module.exports = router;
 

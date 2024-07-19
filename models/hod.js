@@ -1,7 +1,5 @@
 const db = require('./db.js');
 const tableName = 'hod';
-const staffTableName = 'employees'
-const appraisalTableName = 'appraisalform';
 
 class HOD {
     constructor(

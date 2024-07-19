@@ -5,24 +5,31 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser');
 var process = require('process');
+const db = require("./models/db");
+const cors = require('cors'); // Import cors
 
 var employeeModel = require('./models/employee.js');
-var formModel = require('../models/appraisalform.js');
+var formModel = require('./models/appraisalform.js');
 
-employeeModel.sync();
-formModel.sync();
+
+
+
+// employeeModel.sync();
+// formModel.sync();
 
 process.on('SIGINT', db.cleanup);
 process.on('SIGTERM', db.cleanup);
 
 
-var indexRouter = require('./routes/index');
-var formRouter = require('./routes/appraisalform');
-var employeeRouter = require('./routes/employee');
+var indexRouter = require('./routes/index.js');
+// var formRouter = require('./routes/appraisalform');
+var employeeRouter = require('./routes/employee.js');
 
 var app = express();
 
-const db = require("./models/db")
+//Configure CORS to allow requests from http://localhost:3001
+app.use(cors({origin: 'http://localhost:3001'}));
+
 const session = require('express-session');
 
 

@@ -1,12 +1,12 @@
 const express = require('express');
-const hodModel = require('../models/hod')
+const hrModel = require('../models/hr')
 var router = express.Router();
 
-router.post('/hod/login', async (req, res, next) => {
-    const { hodID, hodPassword } = req.body;
+router.post('/hr/login', async (req, res, next) => {
+    const { hrID, hrPassword } = req.body;
   
     try {
-      const result = await hodModel.login(hodID, hodPassword);
+      const result = await hrModel.login(hrID, hrPassword);
       
       //if valid user
       if (result.valid_user) {
@@ -15,8 +15,8 @@ router.post('/hod/login', async (req, res, next) => {
           user: result.user,
           /*
           result.user contains the below
-          managerID: user.managerID,
-          managerName: user.managerName,
+          HR_ID: user.hrID,
+          HR_Name: user.hrName,
           role: user.role,
           */
         });

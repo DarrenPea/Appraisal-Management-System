@@ -1,5 +1,4 @@
 const db = require('./db.js');
-const formModel = require('./appraisalform.js');
 const tableName = 'employees';
 
 class Employee {
@@ -66,31 +65,9 @@ class Employee {
     }
   }
 
-  async function findStatusByID(staffID) {
-    try {
-      const [rows_employee] = await db.query('SELECT appraisalAssigned FROM employee WHERE staffID = ?', [staffID]);
-      // If formModel got function for getting employee status can just call function instead
-      const [rows_form] = await formModel.query('SELECT statusEmployee FROM appraisalform WHERE staffID = ?', [staffID]);
-      
-      if (rows_employee.length === 0 || rows_form.length === 0) {
-        throw new Error('Employee or appraisal form not found');
-      }
-
-      const employee = rows_employee[0];
-      const form = rows_form[0];
-      const formAssigned = Boolean(employee.appraisalAssigned);
-      const employeeStatus = Boolean(form.statusEmployee);
-
-      return [formAssigned, employeeStatus];
-  } catch (error) {
-    console.error("database connection failed. " + error);
-    throw error;
-    }
-  }
-
   async function findRecordsByID(staffID) {
     try {
-      const [rows] = await db.query('SELECT jobFunction, KPI, disciplinaryRecord, attendanceRecord FROM employee WHERE staffID = ?', [staffID]);
+      const [rows] = await db.query('SELECT jobFunction, KPI, disciplinaryRecord, attendanceRecord FROM employees WHERE employeeID = ?', [staffID]);
   
       if (rows.length === 0) {
         throw new Error('Employee not found');
@@ -118,7 +95,7 @@ class Employee {
       const currentMonth = today.getMonth() + 1;
 
       // Query to get employees whose next appraisal month is the current month
-      const [employees] = await db.query(`SELECT employeeID, managerID FROM employee where MONTH(next_appraisal_date) = ?`, [currentMonth]);
+      const [employees] = await db.pool.query(`SELECT employeeID, managerID FROM employees where MONTH(nextAppraisalDate) = ?`, [currentMonth]);
       return employees;
       } catch (error) {
         console.error('Error finding employees by appraisal date:', error);
@@ -128,6 +105,8 @@ class Employee {
 
   async function updateNextAppraisalDate(employeeID){
   let date_join;
+  let date_join_month;
+  let date_join_day;
   try{
     const query = `
       SELECT employeeDateJoined
@@ -135,8 +114,10 @@ class Employee {
       WHERE employeeID = ?
     `;
 
-    const [rows] = await db.query(query, [employeeID]);
-    date_join = rows[0].employeeDateJoined;
+    const [rows] = await db.pool.query(query, [employeeID]);
+    date_join = new Date(rows[0].employeeDateJoined);
+    date_join_month =  String(date_join.getUTCMonth() + 1).padStart(2, '0'); //extract month
+    date_join_day = String(date_join.getUTCDate()).padStart(2, '0');  // Extracts the day
   }
   catch (error) {
     throw new Error('Could not get date_joined');
@@ -145,11 +126,12 @@ class Employee {
   try{
     const query = `
       UPDATE ${tableName} 
-      SET nextAppraisalDate = STR_TO_DATE(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)), '-', MONTH(date_join), '-', DAY(date_join)), '%Y-%m-%d')
+      SET nextAppraisalDate = CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)), '-', ${date_join_month}, '-', ${date_join_day})
       WHERE employeeID = ?
     `;
 
-    await db.query(query, [employeeID]);
+    const [result] = await db.pool.query(query, [employeeID]);
+    console.log(result);
     return true
   } 
   catch (error) {
@@ -206,4 +188,22 @@ async function login(username, password) {
   }
 }
 
-  module.exports = {Employee, sync, findStatusByID, findRecordsByID, findByAppraisalDateDue, updateNextAppraisalDate, login};
+async function hrStatus(employeeID){
+  try{
+    // get table entries based on managerID and current year.
+    const query = `
+      SELECT employeeName, department
+      FROM ${tableName}
+      WHERE employeeID = ?
+      `;
+    //rows is an array of data. 
+    const [rows] = await db.pool.query(query, [employeeID]);
+    return rows
+
+  } 
+  catch (error) {
+    throw new Error('Form not retrieved, problem with getting employeeName and department');
+  }
+}
+
+module.exports = {Employee, sync, findRecordsByID, findByAppraisalDateDue, updateNextAppraisalDate, login, hrStatus};
