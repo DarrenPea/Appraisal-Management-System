@@ -147,7 +147,7 @@ async function employeeStatus(employeeID) {
     return rows;  
   } catch (error) {
     console.error("Error fetching form: ", error);
-    throw error;
+    throw error;  
   }
 }
 
@@ -206,7 +206,7 @@ async function updateForm(formID, formfields, statusHOD = false) {
 
 // /form/HOD/status
 // returns an array where each element is an array that represents a form
-async function hodStatus(hodID){
+async function hodStatus(hodID){  
   const curr_year = new Date().getFullYear();
   const curr_month = new Date().getMonth() + 1; // JavaScript months are 0-indexed, SQL months are 1-indexed
 
@@ -234,7 +234,7 @@ async function hrStatus(){
     const curr_year = new Date().getFullYear();
     const curr_month = new Date().getMonth() + 1; // JavaScript months are 0-indexed, SQL months are 1-indexed
     const query = `
-      SELECT formID, employeeID, hodID, statusEmployee, statusHOD, lastUpdated 
+      SELECT  formID, employeeID, hodID, statusEmployee, statusHOD, appraisalType, dueDate 
       FROM ${tableName}
       WHERE YEAR(FormDateUploaded) = ? AND MONTH(FormDateUploaded) = ?
     `;
