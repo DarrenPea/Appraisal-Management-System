@@ -1,2 +1,2 @@
 const db = require('../models/db.js');
-const message = require('../models/employee.js');
+const employeeModel = require('../models/employee.js');
