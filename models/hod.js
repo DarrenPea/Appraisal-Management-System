@@ -43,177 +43,50 @@ class HOD {
 async function login(username, password) {
     try {
       const [rows] = await db.pool.query(
-        `SELECT * FROM ${tableName} WHERE ManagerID = ?`,
+        `SELECT * FROM ${tableName} WHERE managerID = ?`,
         [username]
       );
   
       if (rows.length === 0) {
-        throw new Error('User not found');
+        return {
+          valid_user: false,
+          user: null
+        };
       }
   
       const user = rows[0];
   
       // Compare the provided password with the stored hashed password
-      const isPasswordValid = password === user.ManagerPassword;
+      const isPasswordValid = password === user.managerPassword;
       //TODO: add encryption to password
     //   const isPasswordValid = await bcrypt.compare(password, user.ManagerPassword);
 
   
       if (!isPasswordValid) {
-        throw new Error('Invalid password');
+        return {
+          valid_user: false,
+          user: null
+        };
       }
   
       // Authentication successful
       //TODO: may need to change
       return {
-        message: 'Authentication successful',
+        valid_user: true,
         user: {
-          managerID: user.ManagerID,
-          managerName: user.ManagerName,
-          managerEmail: user.ManagerEmail,
-          managerDepartment: user.ManagerDepartment,
-          role: user.Role,
+          managerID: user.managerID,
+          managerName: user.managerName,
+          role: user.role,
         }
       };
     } catch (error) {
       console.error('Failed to authenticate: ' + error.message);
-      throw error;
+      return {
+        valid_user: false,
+        user: null
+      };
+      // throw error;
     }
   }
 
-
-
-
-
-
-
-  
-// //routename: /form/HOD
-// async function retrieve_indivForm(staffID) {
-//     try {
-//         // Get the column names
-//         const [columns] = await db.pool.query(`SHOW COLUMNS FROM ${appraisalTableName}`);
-
-//         //the last qn for staff
-//         const staffqn_num = 10;
-//         // Extract the first n column names based on the last qn of staff
-//         const columnNames = columns.slice(0, staffqn_num).map(col => col.Field).join(', ');
-
-//         //get from database all form details & answers completed by staff
-//         const [rows] = await db.pool.query(
-//           `SELECT ${columnNames} FROM ${appraisalTableName} WHERE EmployeeID = ?`,
-//           [staffID]
-//       );
-//         return rows;
-//     } catch (error) {
-//         console.error ('Fail to submit');
-//         throw error;
-//     }
-// }
-
-// /* 
-// routename: form/HOD/submit
-// Havent tested
-
-// data to be passed in this form
-// {
-//     "staffID": "someStaffID",
-//     "a1": "value1",
-//     "a2": "value2",
-//     "a3": "value3",
-//     "a4": "value4",
-//     ...
-// }
-// */
-// //routename: form/HOD/submit
-// async function submit_indivForm(req, res) {
-//   try {
-//       // Extract staffID and the rest of the form data
-//       const { staffID, ...formData } = req.body;
-
-//       // Check if formData is properly extracted
-//       console.log('Form data:', formData);
-
-//       // Get the column names from the appraisalTableName
-//       const [columns] = await db.pool.query(`SHOW COLUMNS FROM ${appraisalTableName}`);
-      
-//       // Index for the first question that HOD needs to fill up
-//       const hodstart_qn = 7;
-
-//       // Extract column names starting from index 7 onwards
-//       const columnNames = columns.slice(hodstart_qn).map(col => col.Field);
-      
-//       // Extract values from formData that correspond to the columns starting from index 7 onwards
-//       const values = columnNames.map(col => formData[col]);
-
-//       // Check for undefined values
-//       values.forEach((value, index) => {
-//           if (value === undefined) {
-//               console.log(`Value for column ${columnNames[index]} is undefined`);
-//           }
-//       });
-
-//       // Construct the SET clause for the UPDATE query
-//       const setClause = columnNames.map(col => `${col} = ?`).join(', ');
-
-//       // Construct the UPDATE query
-//       const query = `UPDATE ${appraisalTableName} SET ${setClause} WHERE EmployeeID = ?`;
-
-//       // Execute the query
-//       await db.pool.query(query, [...values, staffID]);
-      
-//       res.status(200).send('Form submitted successfully');
-//   } catch (error) {
-//       console.error('Failed to submit: ' + error.message);
-//       res.status(500).send('Failed to submit form');
-//   }
-// }
-
-// //routename: employee/details
-// async function retrieve_employeeData(staffID) {
-//   //TODO: add additional params to appraisalform table
-//     try {
-//         // Extract the first 5 column names
-//         //TODO: change to a new column name called EmployeeData
-//         const columnName = 'EmployeeEmail';
-//         // const columnName = employee_KPI;
-
-//         //get from database based on the column names
-//         //TODO: change EmployeeID to ManagerID, since we want all forms under HOD
-//         const [rows] = await db.pool.query(
-//           `SELECT ${columnName} FROM ${staffTableName} WHERE EmployeeID = ?`,
-//           [staffID]
-//       );
-//         return rows;
-
-//     } catch (error) {   
-//         console.error('Failed to retrieve employee data: ' + error.message);
-//         throw error;
-//     }
-// }
-
-// //routename: /form/HOD/status
-// async function retrieve_allforms(hodID) {
-//   //TODO: add additional params to appraisalform table
-//     try {
-//         // Get the column names
-//         const [columns] = await db.pool.query(`SHOW COLUMNS FROM ${appraisalTableName}`);
-
-//         // Extract the first 5 column names
-//         const columnNames = columns.slice(0, 5).map(col => col.Field).join(', ');
-
-//         //get from appraisalfomr table database based on the column names
-//         //TODO: change EmployeeID to ManagerID, since we want all forms under HOD
-//         const [rows] = await db.pool.query(
-//           `SELECT ${columnNames} FROM ${appraisalTableName} WHERE EmployeeID = ?`,
-//           [hodID]
-//       );
-//         return rows;
-
-//     } catch (error) {   
-//         console.error('Failed to retrieve forms: ' + error.message);
-//         throw error;
-//     }
-// }
-
-module.exports =  { HOD, login, retrieve_indivForm, retrieve_allforms, submit_indivForm, retrieve_employeeData}
+module.exports =  { HOD, login}

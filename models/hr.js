@@ -23,63 +23,50 @@ class HR {
 async function login(username, password) {
   try {
     const [rows] = await db.pool.query(
-      `SELECT * FROM ${tableName} WHERE HRID = ?`,
+      `SELECT * FROM ${tableName} WHERE hrID = ?`,
       [username]
     );
 
     if (rows.length === 0) {
-      throw new Error('User not found');
+      return {
+        valid_user: false,
+        user: null
+      };
     }
 
     const user = rows[0];
 
     // Compare the provided password with the stored hashed password
-    const isPasswordValid = password === user.HRPassword;
+    const isPasswordValid = password === user.hrPassword;
     //TODO: add encryption to password
   //   const isPasswordValid = await bcrypt.compare(password, user.HRPassword);
 
 
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      return {
+        valid_user: false,
+        user: null
+      };
     }
 
     // Authentication successful
     //TODO: may need to change
     return {
-      message: 'Authentication successful',
+      valid_user: true,
       user: {
-        HR_ID: user.HRID,
-        HR_Name: user.HRName,
-        HR_Email: user.HREmail,
-        role: user.Role,
+        HR_ID: user.hrID,
+        HR_Name: user.hrName,
+        role: user.role,
       }
     };
   } catch (error) {
     console.error('Failed to authenticate: ' + error.message);
-    throw error;
+    return {
+      valid_user: false,
+      user: null
+    };
+    // throw error;
   }
 }
 
-async function retrieve_employeeData(staffID) {
-  //TODO: add additional params to appraisalform table
-    try {
-        // Extract the first 5 column names
-        //TODO: change to a new column name called EmployeeData
-        const columnName = 'EmployeeEmail';
-        // const columnName = employee_KPI;
-
-        //get from database based on the column names
-        //TODO: change EmployeeID to HRID, since we want all forms under HOD
-        const [rows] = await db.pool.query(
-          `SELECT ${columnName} FROM ${staffTableName} WHERE EmployeeID = ?`,
-          [staffID]
-      );
-        return rows;
-
-    } catch (error) {   
-        console.error('Failed to retrieve employee data: ' + error.message);
-        throw error;
-    }
-}
-
-module.exports =  {HR, login, retrieve_employeeData}
+module.exports =  {HR, login}
