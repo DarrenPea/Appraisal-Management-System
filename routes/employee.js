@@ -2,35 +2,8 @@ const express = require('express');
 const employeeModel = require('../models/employee.js');
 var router = express.Router();
 
-// Enable CORS for all routes
-//added in app.js already
-// router.use(cors({ origin: 'http://localhost:5000' })); // Change port based on FE React port
-
-
 // AJAX end points
-
-// POST: /employee/status
-// For employee to retrieve and view
-
-// FE send: staffID
-// {staffID: val1}
-// BE return: form assigned(boolean), status_employee(completed or not)
-// {form_assigned: boolean , status_employee: boolean}
-
-
-router.post('/employee/status/', async (req, res, next) => {
-    const { staffID } = req.body;
   
-    try {
-      const [formAssigned, statusEmployee] = await employeeModel.findStatusByID(staffID);
-      res.send(JSON.stringify({ form_assigned: formAssigned, status_employee: statusEmployee }));
-    } catch (error) {
-      console.error(error);
-      res.status(404).send(JSON.stringify({ message: 'Employee or appraisal form not found' }));
-    }
-  });
-  
-
 // POST: /employee/details
 // Use this to retrieve employee details held in excel sheet in current workflow.
 
