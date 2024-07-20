@@ -11,7 +11,6 @@ class Employee {
       employeeDateJoined,
       nextAppraisalDate,
       appraisalScore,
-      appraisalAssigned,
       role,
       department,
       jobFunction,
@@ -27,7 +26,6 @@ class Employee {
       this.employeeDateJoined = employeeDateJoined;
       this.nextAppraisalDate = nextAppraisalDate;
       this.appraisalScore = appraisalScore;
-      this.appraisalAssigned = appraisalAssigned;
       this.role = role;
       this.department = department;
       this.jobFunction = jobFunction;
@@ -49,7 +47,6 @@ class Employee {
           employeeDateJoined DATE,
           nextAppraisalDate DATE,
           appraisalScore INT,
-          appraisalAssigned BOOLEAN,
           role VARCHAR(100),
           department VARCHAR(100),
           jobFunction VARCHAR(255),
