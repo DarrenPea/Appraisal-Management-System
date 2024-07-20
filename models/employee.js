@@ -3,7 +3,7 @@ const tableName = 'employees';
 
 class Employee {
     constructor(
-      staffID,
+      employeeID,
       hodID,
       employeePassword,
       employeeName,
@@ -18,7 +18,7 @@ class Employee {
       disciplinaryRecord,
       attendanceRecord
     ) {
-      this.staffID = staffID;
+      this.employeeID = employeeID;
       this.hodID = hodID;
       this.employeePassword = employeePassword;
       this.employeeName = employeeName;
@@ -39,7 +39,7 @@ class Employee {
     try {
       await db.pool.query(`
         CREATE TABLE IF NOT EXISTS ${tableName} (
-          staffID VARCHAR(50) PRIMARY KEY,
+          employeeID VARCHAR(50) PRIMARY KEY,
           hodID VARCHAR(50) PRIMARY KEY,
           employeePassword VARCHAR(255),
           employeeName VARCHAR(255),
