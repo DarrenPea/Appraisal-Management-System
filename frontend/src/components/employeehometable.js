@@ -7,63 +7,64 @@ function EmployeeHomeTable({staffID}) {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		// Simulate an axios request with a timeout
-		setTimeout(() => {
-			const sampleData = [
-			  {
-				staffID: 'John Doe',
-				appraisalType: 'Annual Review',
-				dueDate: '2024-07-30',
-				statusEmployee: 'Pending',
-				formID: 'form 1'
-			  },
-			  {
-				staffID: 'Jane Smith',
-				appraisalType: 'Mid-Year Review',
-				dueDate: '2024-08-15',
-				statusEmployee: 'Submitted',
-				formID: 'form 2'
-			  },
-			];
+		// // Simulate an axios request with a timeout
+		// setTimeout(() => {
+		// 	const sampleData = [
+		// 	  {
+		// 		staffID: 'John Doe',
+		// 		appraisalType: 'Annual Review',
+		// 		dueDate: '2024-07-30',
+		// 		statusEmployee: 'Pending',
+		// 		formID: 'form 1'
+		// 	  },
+		// 	  {
+		// 		staffID: 'Jane Smith',
+		// 		appraisalType: 'Mid-Year Review',
+		// 		dueDate: '2024-08-15',
+		// 		statusEmployee: 'Submitted',
+		// 		formID: 'form 2'
+		// 	  },
+		// 	];
 	  
-			const newAppraisals = sampleData.map(item => ({
-			  employeeName: item.staffID,
-			  type: item.appraisalType,
-			  dueDate: item.dueDate,
-			  status: item.statusEmployee,
-			  formID: item.formID
-			}));
+		// 	const newAppraisals = sampleData.map(item => ({
+		// 	  employeeName: item.staffID,
+		// 	  type: item.appraisalType,
+		// 	  dueDate: item.dueDate,
+		// 	  status: item.statusEmployee,
+		// 	  formID: item.formID
+		// 	}));
 	  
-			setAppraisals(newAppraisals);
-		  }, 1000); // Simulate a 1-second delay
+		// 	setAppraisals(newAppraisals);
+		//   }, 1000); // Simulate a 1-second delay
 
     // Uncomment the axios request when database is ready
-	// const fetchAppraisals = async() => {
-	// 	try {
-	// 		const firstResponse = await axios.post('http://localhost:3000/form/employee/status', { staffID });
-	// 		const appraisalData = firstResponse.data;
+	const fetchAppraisals = async() => {
+		try {
+			// console.log(staffID);
+			const firstResponse = await axios.post('http://localhost:3000/form/employee/status', {staffID} );
+			const appraisalData = firstResponse.data;
 
-	// 		const staffPromises = appraisalData.map(async (item) => {
-	// 			const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: staffID});
-	// 			const { employeeName, department } = secondResponse.data;
-	// 			return {
-	// 				employeeName,
-	// 				department,
-	// 				type: item.appraisalType,
-	// 				dueDate: item.dueDate,
-	// 				employeeStatus: item.statusEmployee,
-	// 				formID: item.formID
-	// 			};
-	// 		});
+			const staffPromises = appraisalData.map(async (item) => {
+				const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: staffID});
+				const { employeeName, department } = secondResponse.data;
+				return {
+					employeeName,
+					department,
+					type: item.appraisalType,
+					dueDate: item.dueDate,
+					employeeStatus: item.statusEmployee,
+					formID: item.formID
+				};
+			});
 			
-	// 		const newAppraisals = await Promise.all(staffPromises);
-	// 		setAppraisals(newAppraisals);
-	// 	} catch (error) {
-	// 		console.error('Error fetching data', error);
-	// 	}
-	// };
+			const newAppraisals = await Promise.all(staffPromises);
+			setAppraisals(newAppraisals);
+		} catch (error) {
+			console.error('Error fetching data', error);
+		}
+	};
 
-	// fetchAppraisals();
+	fetchAppraisals();
 
   	}, [staffID]);
 

@@ -11,34 +11,54 @@ function Login () {
     const navigate = useNavigate();
     const handleloginSubmit = (event) => {
         event.preventDefault();
-        navigate('/employee', {state: {staffID: values.staffID}});
+        // navigate('/employee', {state: {staffID: values.staffID}});
 
         // uncomment when connect to database
 
-        // axios.post('http://localhost:3000/login', values)
-        // .then(res => {
-        //     const data = res.data;
-        //     const validUser = data.valid_user;
-        //     const role = data.role;
-        //     if (validUser) {
-        //         if (role === "HR") {
-        //             navigate('/hr', {state: {staffID: values.staffID}})  // does this work??? the param
-        //         }
-        //         else if (role === "employee") {
-        //             navigate('/employee', {state: {staffID: values.staffID}})
-        //         }
-        //         else if (role === "HOD") {
-        //             navigate('/hod', {state: {staffID: values.staffID}})
-        //         }
-        //         else {
-        //             alert(res.data.Error);
-        //         }
-        //     }
-        //     else {
-        //         alert(res.data.Error);
-        //     }
-        // })
-        // .then(err => console.log(err));
+        axios.post('http://localhost:3000/auth', values)
+        .then(res => {
+            const data = res.data;
+            // const validUser = data[0].valid_user;
+            const role = data[0].role;
+            const name = data[0].employeeName;
+            // if (validUser) {
+            //     if (role === "HR") {
+            //         navigate('/hr', {state: {staffID: values.staffID}})  // does this work??? the param
+            //     }
+            //     else if (role === "employee") {
+            //         navigate('/employee', {state: {staffID: values.staffID}})
+            //     }
+            //     else if (role === "HOD") {
+            //         navigate('/hod', {state: {staffID: values.staffID}})
+            //     }
+            //     else {
+            //         alert(res.data.Error);
+            //     }
+            // }
+            // else {
+            //     alert(res.data.Error);
+            // }
+            if (data[0]===1 || data[0]===2) {
+                //if pw or ID wrong
+                //TODO: SHOULD indicate pw or username fail
+                alert(res.data.Error);
+            }
+            else{
+                if (role === "HR") {
+                    navigate('/hr', {state: {staffID: values.staffID}})  // does this work??? the param. YES
+                }
+                else if (role === "employee") {
+                    navigate('/employee', {state: {staffID: values.staffID}})
+                }
+                else if (role === "HOD") {
+                    navigate('/hod', {state: {staffID: values.staffID}})
+                }
+                else {
+                    alert(res.data.Error);
+                }
+            }
+        })
+        .then(err => console.log(err));
 
         // until here!!!
 
