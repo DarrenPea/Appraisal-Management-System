@@ -16,20 +16,23 @@ function HrHome() {
     };
 
 	return (
-		<div className="containerhr">
-            <div className='home-header'>
-                <h1>WELCOME, {staffIDUpper} [HR]</h1>
-                <button className='logout-button' onClick={handlelogoutSubmit}>Logout <LogOut style={{marginLeft: '6px'}} /></button>
-            </div>
-            <main>
-                <div className="hr-appraisal-header">
-                    <h2>Pending Appraisals:</h2>
+        <div className="hrhome-body">
+            <div className="containerhr">
+                <div className='home-header'>
+                    <h1>WELCOME, {staffIDUpper} [HR]</h1>
+                    <button className='logout-button' onClick={handlelogoutSubmit}>Logout <LogOut style={{marginLeft: '6px'}} /></button>
                 </div>
-				<div className='hr-table-container'>
-                <HrHomeTable />
-				</div>
-            </main>
+                <main>
+                    <div className="hr-appraisal-header">
+                        <h2>Pending Appraisals:</h2>
+                    </div>
+                    <div className='hr-table-container'>
+                    <HrHomeTable HR_ID={staffID}/>
+                    </div>
+                </main>
+            </div>
         </div>
+		
 	);
 }
 

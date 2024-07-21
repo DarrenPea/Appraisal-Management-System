@@ -11,7 +11,15 @@ function Login () {
     const navigate = useNavigate();
     const handleloginSubmit = (event) => {
         event.preventDefault();
-        navigate('/employee', {state: {staffID: values.staffID}});
+        if(values.staffID === 'employee') {
+            navigate('/employee', {state: {staffID: values.staffID}});
+        }
+        if(values.staffID === 'hod') {
+            navigate('/hod', {state: {staffID: values.staffID}});
+        }
+        if(values.staffID === 'hr') {
+            navigate('/hr', {state: {staffID: values.staffID}});
+        }
 
         // uncomment when connect to database
 

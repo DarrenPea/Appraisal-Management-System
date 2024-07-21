@@ -11,14 +11,16 @@ function EmployeeHomeTable({staffID}) {
 		setTimeout(() => {
 			const sampleData = [
 			  {
-				staffID: 'John Doe',
+				employeeName: 'John Doe',
+				department: 'customer service',
 				appraisalType: 'Annual Review',
 				dueDate: '2024-07-30',
 				statusEmployee: 'Pending',
 				formID: 'form 1'
 			  },
 			  {
-				staffID: 'Jane Smith',
+				employeeName: 'Jane Smith',
+				department: 'manufacturing',
 				appraisalType: 'Mid-Year Review',
 				dueDate: '2024-08-15',
 				statusEmployee: 'Submitted',
@@ -27,11 +29,12 @@ function EmployeeHomeTable({staffID}) {
 			];
 	  
 			const newAppraisals = sampleData.map(item => ({
-			  employeeName: item.staffID,
-			  type: item.appraisalType,
-			  dueDate: item.dueDate,
-			  status: item.statusEmployee,
-			  formID: item.formID
+				department: item.department,
+			  	employeeName: item.employeeName,
+			  	type: item.appraisalType,
+			  	dueDate: item.dueDate,
+			  	status: item.statusEmployee,
+			  	formID: item.formID
 			}));
 	  
 			setAppraisals(newAppraisals);
@@ -79,10 +82,8 @@ function EmployeeHomeTable({staffID}) {
 	// .then(err => console.log(err));
 
 
-	const handleEmployeeFillUpClick = (formID, staffID) => {
-
-		// remember change to employee
-		navigate('/form', { state: { formID , staffID, role: "employee"} });
+	const handleEmployeeFillUpClick = (formID, staffID, employeeName, department, type) => {
+		navigate('/form', { state: { formID , staffID, role: "employee", employeeName, department, type} });
 	};
 
     return (
@@ -90,6 +91,7 @@ function EmployeeHomeTable({staffID}) {
             <thead>
                 <tr>
                     <th>Name</th>
+					<th>Department</th>
                     <th>Purpose</th>
                     <th>Due Date</th>
                     <th>Status</th>
@@ -100,6 +102,7 @@ function EmployeeHomeTable({staffID}) {
                 {appraisals.map((appraisal, index) => (
                     <tr key={index}>
                         <td>{appraisal.employeeName}</td>
+						<td>{appraisal.department}</td>
                         <td>{appraisal.type}</td>
                         <td>{appraisal.dueDate}</td>
                         <td className={appraisal.status === 'Pending' ? 'employee-status-pending' : 'employee-status-submitted'}>
@@ -109,7 +112,7 @@ function EmployeeHomeTable({staffID}) {
                             <button
                                 className={`employee-fill-up-btn ${appraisal.status === 'Submitted' ? 'disabled' : ''}`}
                                 disabled={appraisal.status === 'Submitted'}
-								onClick={() => handleEmployeeFillUpClick(appraisal.formID, staffID)}
+								onClick={() => handleEmployeeFillUpClick(appraisal.formID, staffID, appraisal.employeeName, appraisal.department, appraisal.type)}
                             >
                                 Fill up
                             </button>
