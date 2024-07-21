@@ -4,14 +4,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 function AppraisalForm() {
 	const {state} = useLocation();
-	const {formID, staffID, role} = state;
+	const {formID, staffID, role, employeeName, department, type} = state;
 	const navigate = useNavigate();
 
 	const [modalVisible, setModalVisible] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
 	
 	const [formData, setFormData] = useState({
-		// add employeename and stuff for modal to display
 		formID,
 		a1: 'sdfdsfsdgdsg',
 		a2_1: 'sdfdsfsdgdsg',
@@ -95,6 +94,11 @@ function AppraisalForm() {
         }
     };
 	
+	const handleAppraisalOK = (e) => {
+		e.preventDefault();
+
+		setModalVisible(true);
+	}
 
 	// const handleAppraisalSubmit = (e) => {
 	// 	e.preventDefault();
@@ -875,12 +879,13 @@ function AppraisalForm() {
 								<label htmlFor="b">Describe the purpose of the appraiser's job function. Review and discuss self-appraisal entries; appraiser's career direction options and wishes. Aprpaiser may like to discuss on specific objectives that will enable the appraisee to reach competence and to meet required performance in cuurent job, or achieve readiness for, the next job level/type, or if no particular next role is identified or sought, to achieve the desired personal growth or experience. These objectives must adhere to the SMARTER rules - specific, measurable, agreed, realistic, time-bound, ethical, recorded. Training and development support maybe discuss to help the appraisee to meet the agreed objectives above. Other issues maybe covered (if any).</label>
 								<p className='hod-section-b' id='b' name='b'>{formData.b}</p>
 								
-								<button className="hr-ok-btn" type="submit">OK</button>
+								<button className="hr-ok-btn" onClick={handleAppraisalOK}>Next</button>
 								</>
 							)}
 							{(role === 'employee' || role === 'hod') && (
-								<button type="submit">Submit</button>
-							)}						</form>
+								<button className='appraisal-form-submit-btn' type="submit">Submit</button>
+							)}						
+						</form>
 					</div>
 				</main>
 			</div>
@@ -889,13 +894,18 @@ function AppraisalForm() {
                 <div className="modal-confirm-form">
                     <div className="modal-confirm-form-content">
                         <span className="close-confirm-form" onClick={handleCloseModal}>&times;</span>
-                        <h2>Submission Details</h2>
-                        <p>Employee Name: amy</p>
-                        <p>Employee ID: j123</p>
-                        <p>Appraisal Date: 123123</p>
-                        <p>Position: 123</p>
-                        <p>Appraisal Type: dsfyear</p>
-                        <button className="close-confirm-form-btn" onClick={handleConfirm}>Confirm</button>
+							<>
+							<h2>Details</h2>
+							{role === 'employee' && (
+								<p>Name: {employeeName}</p>
+							)}
+							{(role === 'hod' || role === 'hr') && (
+								<p>Employee Name: {employeeName}</p>
+							)}
+							<p>Department: {department}</p>
+							<p>Purpose: {type}</p>
+							</>
+                        <button className="close-confirm-form-btn" onClick={handleConfirm}>OK</button>
                     </div>
                 </div>
             )}

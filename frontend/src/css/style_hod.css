@@ -1,22 +1,22 @@
-body {
+.hodhome-body {
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
     margin: 0;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100vw;
     height: 100vh;
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
 .containerhod {
-    width: 80vw;
-    max-width: 1200px;
-    height: 80vh;
-    max-height: 800px;
     background-color: #fff;
-    padding: 20px;
+    padding: 30px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    margin: 40px 40px;
 }
 
 .home-header {
@@ -66,17 +66,15 @@ main {
 }
 
 .hod-table-container {
-    width: 90%;
-    overflow-x: auto;
     padding: 1.5px;
+    margin-top: 20px;
+    width: 100%;
 }
 
 .hod-table {
     display: table;
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    overflow-x: hidden;
 }
 
 th, td {
@@ -97,9 +95,9 @@ td {
     width: 13%;
 }
 
-td:last-child {
+.hod-table td:last-child {
     text-align: center;
-    width: 10%;
+    width: 13%;
 }
 
 .hod-employee-status-pending {
@@ -151,10 +149,6 @@ td:last-child {
 }
 
 @media (max-width: 360px) {
-    .containerhod {
-        padding: 20px 10px;
-        width: 90vw;
-    }
     
     h1 {
         font-size: 20px;
