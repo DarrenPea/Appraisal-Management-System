@@ -1,0 +1,166 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.containerhod {
+    width: 80vw;
+    max-width: 1200px;
+    height: 80vh;
+    max-height: 800px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.home-header {
+    display: flex;
+}
+
+h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.logout-button {
+    width: fit-content;
+    height: fit-content;
+    background-color: #eb1f1fca;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+}
+
+.hod-appraisal-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.hod-appraisal-header h2 {
+    background-color: #f8d7da;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hod-table-container {
+    width: 90%;
+    overflow-x: auto;
+    padding: 1.5px;
+}
+
+.hod-table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    overflow-x: hidden;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+}
+
+th {
+    font-weight: bold;
+}
+
+td {
+    border: 1.5px solid black;
+}
+
+.hod-view {
+    text-align: center;
+    width: 13%;
+}
+
+td:last-child {
+    text-align: center;
+    width: 10%;
+}
+
+.hod-employee-status-pending {
+    color: red;
+}
+
+.hod-employee-status-submitted {
+    color: green;
+}
+
+.hod-status-pending {
+    color: red;
+}
+
+.hod-status-submitted {
+    color: green;
+}
+
+.hod-view-btn {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px 30px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.hod-view-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.hod-fill-up-btn {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.hod-fill-up-btn.disabled {
+    background-color: #e0e0e0;
+    border: 1px solid #c0c0c0;
+    cursor: not-allowed;
+}
+
+.hod-fill-up-btn:hover:not(.disabled) {
+    background-color: #f0f0f0;
+}
+
+@media (max-width: 360px) {
+    .containerhod {
+        padding: 20px 10px;
+        width: 90vw;
+    }
+    
+    h1 {
+        font-size: 20px;
+    }
+
+    input, button {
+        font-size: 14px;
+    }
+}

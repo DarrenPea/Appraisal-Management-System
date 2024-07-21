@@ -1,0 +1,61 @@
+/* Modal container */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(152, 145, 145, 0.136);
+    backdrop-filter: blur(2px);
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Modal content */
+.modal-content {
+    position: relative; /* Make this element the containing block for absolute positioning */
+    background-color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    max-width: 500px; /* Adjust width as needed */
+}
+
+/* Close button positioning */
+.modal-close-button {
+    position: absolute;
+    top: 10px; /* Adjust distance from top */
+    right: 10px; /* Adjust distance from right */
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-close-button:hover {
+	background-color: #f0f0f0;
+}
+
+.modal-employee-name {
+	font-weight: bold;
+	font-size: 1.8em;
+}
+
+.hod-modal-table {
+	border-collapse: collapse;
+}
+
+.hod-modal-title {
+	font-weight: bold;
+	width: 4%;
+}
+
+p {
+	font-size: 1.3em;
+}

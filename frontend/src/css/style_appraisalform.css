@@ -1,0 +1,294 @@
+.appraisal-body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+}
+.appraisal-form-page {
+    width: 90vw;
+    max-width: 1200px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 40px auto;
+}
+.appraisal-form-page h1 {
+	text-align: center;
+}
+.appraisal-form-page h2 {
+	font-size: 1.3em;
+	text-align: center;
+}
+.appraisal-form-container h3 {
+    margin: 20px ; /* Space above and below the header */
+    margin-left: 22px;
+    font-size: 1.2em;
+    color: #333;
+    border-bottom: 1.5px solid #ddd; /* Optional: Add a border under the header */
+    padding-bottom: 10px;
+	width: 100%;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    align-self: flex-start;
+    font-size: 16px;
+    color: #555;
+    text-align: left;
+    width: 100%;
+    margin-left: 2px;
+}
+
+form textarea {
+    margin-bottom: 20px; /* Space below the text area */
+    padding: 10px;
+    font-size: 1em;
+    font-family: sans-serif;
+    border: 1.5px solid #ccc; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    width: 100%; /* Full width */
+    box-sizing: border-box;
+	resize: none;
+}
+.appraisal-form-container {
+    margin-top: 20px;
+	width: 100%;
+}
+.appraisal-form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.employee_section_a1 {
+    margin-top: 10px;
+    width: 100%;
+    white-space: pre-line;
+    font-size: 1em;
+}
+
+.appraisal-a2-div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.employee_section_a2 {
+    margin-top: 10px;
+    margin-bottom: 40px;
+    width: 100%;
+    white-space: pre-line;
+    font-size: 1em;
+}
+
+.hod-section-b {
+    margin-top: 15px;
+    margin-bottom: 40px;
+    width: 100%;
+    white-space: pre-line;
+    font-size: 1em;
+}
+
+.appraisal-form h4 {
+    font-size: 1em;
+    margin-top: 0;
+}
+
+.appraisal-form h5 {
+    width: 100%;
+    text-align: center;
+    margin-top: 0;
+    font-size: 0.95em;
+}
+.rating-section {
+    flex-direction: column;
+    width: 100%;
+}
+
+.rating-row {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1.5px solid #ddd;
+}
+
+.rating-row-nonemployee {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rating-label {
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    color: #333;
+    text-align: left;
+    width: 50%;
+}
+
+.rating-options {
+    margin-top: 5px;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 50%;
+}
+
+.rating-options label {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    color: #555;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.rating-options input[type="radio"] {
+    margin-right: 5px;
+    cursor: pointer;
+    width: 13px;
+}
+.rating-options span {
+    margin-right: 5px;
+}
+
+.rating-table-view {
+    margin-top: 30px;
+    margin-bottom: 30px;
+	border-collapse: collapse;
+    width: 70%;
+    font-weight: bold;
+}
+
+.rating-table-view td:last-child {
+    width: 40px;
+    height: 40px;
+}
+
+.overall-score {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.overall-score p{
+    font-size: 1em;
+}
+
+.overall-score label {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-right: 10px;
+    text-align: right;
+}
+
+.overallRating {
+    font-weight: bold;
+    font-size: 1em;
+    width: 100px;
+    margin-top: 0;
+}
+
+.modal-confirm-form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-confirm-form-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+}
+
+.close-confirm-form {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.hr-ok-btn {
+    padding: 10px 15px;
+    margin-top: 50px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #2583e8; /* Primary color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 10%;
+}
+
+.hr-ok-btn:hover {
+    background-color: #0056b3;
+}
+
+.hr-ok-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.close-confirm-form-btn {
+    padding: 10px 15px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #2583e8; /* Primary color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.close-confirm-form-btn:hover {
+    background-color: #0056b3;
+}
+
+.close-confirm-form-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+
+@media (max-width: 768px) {
+    .rating-section {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+    }
+    
+    .rating-label {
+        width: 100%; /* Full width on small screens */
+        margin-bottom: 10px;
+    }
+
+    .rating-options {
+        width: 100%; /* Full width on small screens */
+        justify-content: flex-start; /* Align to the start */
+    }
+
+    .rating-options label {
+        margin-right: 10px; /* Increased margin for clarity */
+    }
+}

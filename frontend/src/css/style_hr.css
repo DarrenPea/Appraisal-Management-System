@@ -1,0 +1,142 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.containerhr {
+    width: 80vw;
+    max-width: 1200px;
+    height: 80vh;
+    max-height: 800px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.home-header {
+    display: flex;
+}
+
+h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.logout-button {
+    width: fit-content;
+    height: fit-content;
+    background-color: #eb1f1fca;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+}
+
+.hr-appraisal-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.hr-appraisal-header h2 {
+    background-color: #f8d7da;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hr-table-container {
+    width: 90%;
+    overflow-x: auto;
+    padding: 1.5px;
+}
+
+.hr-table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+}
+
+th {
+    font-weight: bold;
+}
+
+td {
+    border: 1.5px solid black;
+}
+
+td:last-child {
+    text-align: center;
+    width: 10%;
+}
+
+.hr-employee-status-pending {
+    color: red;
+}
+
+.hr-employee-status-submitted {
+    color: green;
+}
+
+.hr-hod-status-pending {
+    color: red;
+}
+
+.hr-hod-status-submitted {
+    color: green;
+}
+
+.hr-view-btn {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.hr-view-btn:hover {
+    background-color: #f0f0f0;
+}
+
+@media (max-width: 360px) {
+    .containerhod {
+        padding: 20px 10px;
+        width: 90vw;
+    }
+    
+    h1 {
+        font-size: 20px;
+    }
+
+    input, button {
+        font-size: 14px;
+    }
+}

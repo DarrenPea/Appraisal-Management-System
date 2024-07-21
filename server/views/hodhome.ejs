@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Appraisals</title>
+    <link rel="stylesheet" href="../css/style_hod.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>WELCOME <%= hodName.toUpperCase() %> [HOD]</h1>
+        </header>
+        <main>
+            <div class="appraisal-header">
+                <h2>Pending Appraisals:</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="appraisal-list">
+                    <!-- Dynamic rows will be inserted here -->
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <script src="../js/script_hod.js"></script>
+</body>
+</html>
