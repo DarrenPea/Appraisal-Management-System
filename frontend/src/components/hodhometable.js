@@ -8,13 +8,6 @@ function HodHomeTable( { HOD_ID }) {
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
-    // uncomment!!!!!
-    // const [appraisals, setAppraisals] = useState([]);
-
-    // useEffect(() => {
-        //STOPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
-
-
 
 		// Simulate an axios request with a timeout
 		// setTimeout(() => {
@@ -41,34 +34,60 @@ function HodHomeTable( { HOD_ID }) {
 
 
     // Uncomment the axios request when database is ready
-        // const fetchAppraisals = async() => {
-        //     try {
-        //         const firstResponse = await axios.post('http://localhost:3000/form/HOD/status', { HOD_ID });
-        //         const appraisalData = firstResponse.data;
+    const [appraisals, setAppraisals] = useState([]);
 
-        //         const staffPromises = appraisalData.map(async (item) => {
-        //             const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
-        //             const { employeeName, department } = secondResponse.data;
-        //             return {
-        //                 employeeID: item.employeeID,
-        //                 employeeName,
-        //                 department,
-        //                 type: item.appraisalType,
-        //                 dueDate: item.dueDate,
-        //                 employeeStatus: item.statusEmployee,
-        //                 status: item.statusHOD,
-        //                 formID: item.formID
-        //             };
-        //         });
+    useEffect(() => {
+        const fetchAppraisals = async() => {
+            try {
+                const firstResponse = await axios.post('http://localhost:3000/form/HOD/status', { HOD_ID });
+                const appraisalData = firstResponse.data;
+
+                // Ensure data is in an array format
+                const appraisalArray = Array.isArray(appraisalData) ? appraisalData : [appraisalData];
+                console.log("array", appraisalArray);
                 
-        //         const newAppraisals = await Promise.all(staffPromises);
-        //         setAppraisals(newAppraisals);
-        //     } catch (error) {
-        //         console.error('Error fetching data', error);
-        //     }
-        // };
+                if(appraisalArray[0].length === 0) {
+                    setAppraisals({formID: null})
+                    return
+                }
 
-        // fetchAppraisals();
+                const staffPromises = appraisalData.map(async (item) => {
+                    console.log("item", item.employeeID);
+                    console.log("here1: fetching second response");
+
+                    try {
+                        const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
+                        const { employeeName, department } = secondResponse.data[0];
+                        const new_date = new Date(item.dueDate);
+                        const due_date = new_date.toISOString().split('T')[0];
+
+                        console.log("name", employeeName)
+                        return {
+                            employeeID: item.employeeID,
+                            employeeName,
+                            department,
+                            type: item.appraisalType,
+                            dueDate: due_date,
+                            employeeStatus: item.statusEmployee,
+                            status: item.statusHOD,
+                            formID: item.formID
+                        };
+                    } catch (error) {
+                        console.error('Error fetching second response', error);
+				        return null;
+                    }
+                });
+                
+                const newAppraisals = await Promise.all(staffPromises);
+                setAppraisals(newAppraisals);
+            } catch (error) {
+                console.error('Error fetching data', error);
+            }
+        };
+
+        fetchAppraisals();
+    }, [HOD_ID]);
+
 
         // until hereeee!!!!!
 
@@ -90,30 +109,34 @@ function HodHomeTable( { HOD_ID }) {
 		// })
 	    // .catch(err => console.log(err));
 
-    //remove this
-  	// }, [HOD_ID]);
 
-
-    const appraisals = [
-        { employeeID: 'Sara', employeeName: 'Sarah Lee', department: 'manufacturing', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', formID: '1'},
-        { employeeID: 'Lebro', employeeName: 'Lebron James', department: 'svc', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '2' },
-        { employeeID: 'Fred', employeeName: 'Freddy', department: 'manufacturing', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '3' },
-        { employeeID: 'Fath', employeeName: 'Father Loh', department: 'manufacturing', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', formID: '4' },
-        { employeeID: 'Sara', employeeName: 'Sarah Lee', department: 'manufacturing', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', formID: '1'},
-        { employeeID: 'Lebro', employeeName: 'Lebron James', department: 'test', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '2' },
-        { employeeID: 'Fred', employeeName: 'Freddy', department: 'sleep', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '3' },
-        { employeeID: 'Fath', employeeName: 'Father Loh', department: 'cry', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', formID: '4' },
-        { employeeID: 'Sara', employeeName: 'Sarah Lee', department: 'manufacturing', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', formID: '1'},
-        { employeeID: 'Lebro', employeeName: 'Lebron James', department: 'manufacturing', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '2' },
-        { employeeID: 'Fred', employeeName: 'Freddy', department: 'ded', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '3' },
-        { employeeID: 'Fath', employeeName: 'Father Loh', department: 'manufacturing', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', formID: '4' }
-    ];
+    // const appraisals = [
+    //     { employeeID: 'Sara', employeeName: 'Sarah Lee', department: 'manufacturing', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', formID: '1'},
+    //     { employeeID: 'Lebro', employeeName: 'Lebron James', department: 'svc', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '2' },
+    //     { employeeID: 'Fred', employeeName: 'Freddy', department: 'manufacturing', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '3' },
+    //     { employeeID: 'Fath', employeeName: 'Father Loh', department: 'manufacturing', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', formID: '4' },
+    //     { employeeID: 'Sara', employeeName: 'Sarah Lee', department: 'manufacturing', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', formID: '1'},
+    //     { employeeID: 'Lebro', employeeName: 'Lebron James', department: 'test', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '2' },
+    //     { employeeID: 'Fred', employeeName: 'Freddy', department: 'sleep', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '3' },
+    //     { employeeID: 'Fath', employeeName: 'Father Loh', department: 'cry', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', formID: '4' },
+    //     { employeeID: 'Sara', employeeName: 'Sarah Lee', department: 'manufacturing', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', formID: '1'},
+    //     { employeeID: 'Lebro', employeeName: 'Lebron James', department: 'manufacturing', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '2' },
+    //     { employeeID: 'Fred', employeeName: 'Freddy', department: 'ded', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', formID: '3' },
+    //     { employeeID: 'Fath', employeeName: 'Father Loh', department: 'manufacturing', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', formID: '4' }
+    // ];
 
     const handleHodFillUpClick = (formID, HOD_ID, employeeName, department, type) => {
 		navigate('/form', { state: { formID , staffID: HOD_ID, role: "hod", employeeName, department, type } });
 	};
 
     return (
+        <>
+        {appraisals.formID === null && (
+            <div className='no-actions'>
+                <p>No actions are needed at this time.</p>
+            </div>
+        )}
+        {appraisals.formID !== null && (
         <table className='hod-table'>
             <thead>
                 <tr>
@@ -134,12 +157,26 @@ function HodHomeTable( { HOD_ID }) {
                         <td>{appraisal.department}</td>
                         <td>{appraisal.type}</td>
                         <td>{appraisal.dueDate}</td>
-                        <td className={appraisal.employeeStatus === 'Pending' ? 'hod-employee-status-pending' : 'hod-employee-status-submitted'}>
-                            {appraisal.employeeStatus}
-                        </td>
-                        <td className={appraisal.status === 'Pending' ? 'hod-status-pending' : 'hod-status-submitted'}>
-                            {appraisal.status}
-                        </td>
+                        {appraisal.employeeStatus === 0 && (
+                            <td className='hod-employee-status-pending'>
+                                Pending
+                            </td>
+                        )}
+                        {appraisal.employeeStatus === 1 && (
+                            <td className='hod-employee-status-submitted'>
+                                Submitted
+                            </td>
+                        )}
+                        {appraisal.status === 0 && (
+                            <td className='hod-status-pending'>
+                                Pending
+                            </td>
+                        )}
+                        {appraisal.status === 1 && (
+                            <td className='hod-status-submitted'>
+                                Submitted
+                            </td>
+                        )}
                         <td className='hod-view'>
                             <button
                                 className='hod-view-btn'
@@ -151,8 +188,8 @@ function HodHomeTable( { HOD_ID }) {
                         </td>
                         <td>
                             <button
-                                className={`hod-fill-up-btn ${appraisal.status === 'Submitted' ? 'disabled' : ''}`}
-                                disabled={appraisal.status === 'Submitted'}
+                                className={`hod-fill-up-btn ${appraisal.status === '1' ? 'disabled' : ''}`}
+                                disabled={appraisal.status === '1'}
                                 onClick={() => handleHodFillUpClick(appraisal.formID, HOD_ID, appraisal.employeeName, appraisal.department, appraisal.type)}
                             >
                                 Fill up
@@ -162,6 +199,8 @@ function HodHomeTable( { HOD_ID }) {
                 ))}
             </tbody>
         </table>
+        )}
+        </>
     );
 }
 
