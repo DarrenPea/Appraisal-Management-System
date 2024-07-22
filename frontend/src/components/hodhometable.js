@@ -188,8 +188,8 @@ function HodHomeTable( { HOD_ID }) {
                         </td>
                         <td>
                             <button
-                                className={`hod-fill-up-btn ${appraisal.status === 'Submitted' ? 'disabled' : ''}`}
-                                disabled={appraisal.status === 'Submitted'}
+                                className={`hod-fill-up-btn ${appraisal.status === '1' ? 'disabled' : ''}`}
+                                disabled={appraisal.status === '1'}
                                 onClick={() => handleHodFillUpClick(appraisal.formID, HOD_ID, appraisal.employeeName, appraisal.department, appraisal.type)}
                             >
                                 Fill up

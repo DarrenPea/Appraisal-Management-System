@@ -148,8 +148,8 @@ function EmployeeHomeTable({staffID}) {
 						)}
                         <td>
                             <button
-                                className={`employee-fill-up-btn ${appraisal.employeeStatus === 'Submitted' ? 'disabled' : ''}`}
-                                disabled={appraisal.employeeStatus === 'Submitted'}
+                                className={`employee-fill-up-btn ${appraisal.employeeStatus === '1' ? 'disabled' : ''}`}
+                                disabled={appraisal.employeeStatus === '1'}
 								onClick={() => handleEmployeeFillUpClick(appraisal.formID, staffID, appraisal.employeeName, appraisal.department, appraisal.type)}
                             >
                                 Fill up
