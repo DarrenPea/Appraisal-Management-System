@@ -27,6 +27,7 @@ h1 {
     font-size: 1.5em;
     margin-bottom: 20px;
     text-align: left;
+    margin-right: 40px;
 }
 
 .logout-button {
@@ -57,6 +58,16 @@ h1 {
     background-color: #f8d7da;
     padding: 15px;
     border-radius: 5px;
+}
+
+.no-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.no-actions p {
+    font-size: 1.2em;
+    color: rgb(7, 199, 7);
 }
 
 main {
@@ -92,7 +103,7 @@ td {
 
 .employee-table td:last-child {
     text-align: center;
-    width: 14%;
+    width: 15%;
 }
 
 .employee-status-pending {

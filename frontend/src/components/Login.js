@@ -11,15 +11,48 @@ function Login () {
     const navigate = useNavigate();
     const handleloginSubmit = (event) => {
         event.preventDefault();
-        if(values.staffID === 'employee') {
-            navigate('/employee', {state: {staffID: values.staffID}});
-        }
-        if(values.staffID === 'hod') {
-            navigate('/hod', {state: {staffID: values.staffID}});
-        }
-        if(values.staffID === 'hr') {
-            navigate('/hr', {state: {staffID: values.staffID}});
-        }
+
+        axios.post('http://localhost:3000/auth', values)
+        .then(res => {
+            const data = res.data;
+            // const validUser = data[0].valid_user;
+            const role = data[0].role;
+
+            if (data[0]===1 || data[0]===2) {
+                //if pw or ID wrong
+                //TODO: SHOULD indicate pw or username fail
+                alert(res.data.Error);
+            }
+            else{
+                if (role === "HR") {
+                    const name = data[0].hrName;
+                    navigate('/hr', {state: {staffID: values.staffID, name}})  // does this work??? the param. YES
+                }
+                else if (role === "Employee") {
+                    const name = data[0].employeeName;
+                    navigate('/employee', {state: {staffID: values.staffID, name}})
+                }
+                else if (role === "HOD") {
+                    const name = data[0].hodName;
+                    navigate('/hod', {state: {staffID: values.staffID, name}})
+                }
+                else {
+                    alert(res.data.Error);
+                }
+            }
+        })
+        .then(err => console.log(err));
+
+
+        // if(values.staffID === 'employee') {
+        //     navigate('/employee', {state: {staffID: values.staffID}});
+        // }
+        // if(values.staffID === 'hod') {
+        //     navigate('/hod', {state: {staffID: values.staffID}});
+        // }
+        // if(values.staffID === 'hr') {
+        //     navigate('/hr', {state: {staffID: values.staffID}});
+        // }
 
         // uncomment when connect to database
 
