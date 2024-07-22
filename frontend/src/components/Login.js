@@ -54,34 +54,6 @@ function Login () {
         //     navigate('/hr', {state: {staffID: values.staffID}});
         // }
 
-        // uncomment when connect to database
-
-        // axios.post('http://localhost:3000/login', values)
-        // .then(res => {
-        //     const data = res.data;
-        //     const validUser = data.valid_user;
-        //     const role = data.role;
-        //     if (validUser) {
-        //         if (role === "HR") {
-        //             navigate('/hr', {state: {staffID: values.staffID}})  // does this work??? the param
-        //         }
-        //         else if (role === "employee") {
-        //             navigate('/employee', {state: {staffID: values.staffID}})
-        //         }
-        //         else if (role === "HOD") {
-        //             navigate('/hod', {state: {staffID: values.staffID}})
-        //         }
-        //         else {
-        //             alert(res.data.Error);
-        //         }
-        //     }
-        //     else {
-        //         alert(res.data.Error);
-        //     }
-        // })
-        // .then(err => console.log(err));
-
-        // until here!!!
 
 
 
