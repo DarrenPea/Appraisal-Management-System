@@ -47,7 +47,7 @@ function Login () {
                 if (role === "HR") {
                     navigate('/hr', {state: {staffID: values.staffID}})  // does this work??? the param. YES
                 }
-                else if (role === "employee") {
+                else if (role === "Employee") {
                     navigate('/employee', {state: {staffID: values.staffID}})
                 }
                 else if (role === "HOD") {

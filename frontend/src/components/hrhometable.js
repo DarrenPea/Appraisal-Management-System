@@ -6,9 +6,9 @@ function HrHomeTable( { HR_ID } ) {
 	const navigate = useNavigate();
 
 	// UNCOMMENT WHEN API CALL READY
-    // const [appraisals, setAppraisals] = useState([]);
+    const [appraisals, setAppraisals] = useState([]);
 
-    // useEffect(() => {
+    useEffect(() => {
 
 	// STOP HERE
 
@@ -36,46 +36,48 @@ function HrHomeTable( { HR_ID } ) {
 
 
 	// UNCOMMENT WHEN API CALL READY
-	// const fetchAppraisals = async() => {
-	// 	try {
-	// 		const firstResponse = await axios.get('http://localhost:3000/form/HR/status');
-	// 		const appraisalData = firstResponse.data;
+	const fetchAppraisals = async() => {
+		try {
+			const firstResponse = await axios.get('http://localhost:3000/form/HR/status');
+			const appraisalData = firstResponse.data;
 
-	// 		const staffPromises = appraisalData.map(async (item) => {
-	// 			const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
-	// 			const { employeeName, department } = secondResponse.data;
-	// 			return {
-	// 				employeeName,
-	// 				department,
-	// 				type: item.appraisalType,
-	// 				dueDate: item.dueDate,
-	// 				employeeStatus: item.statusEmployee,
-	// 				status: item.statusHOD,
-	// 				hodID: item.hodID,
-	// 				formID: item.formID
-	// 			};
-	// 		});
+			const staffPromises = appraisalData.map(async (item) => {
+				const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
+				const { employeeName, department } = secondResponse.data[0];
+				const new_date = new Date(item.dueDate);
+				const due_date = new_date.toISOString().split('T')[0];
+				return {
+					employeeName,
+					department,
+					type: item.appraisalType,
+					dueDate: due_date,
+					employeeStatus: item.statusEmployee,
+					status: item.statusHOD,
+					hodID: item.hodID,
+					formID: item.formID
+				};
+			});
 			
-	// 		const newAppraisals = await Promise.all(staffPromises);
-	// 		setAppraisals(newAppraisals);
-	// 	} catch (error) {
-	// 		console.error('Error fetching data', error);
-	// 	}
-	// };
+			const newAppraisals = await Promise.all(staffPromises);
+			setAppraisals(newAppraisals);
+		} catch (error) {
+			console.error('Error fetching data', error);
+		}
+	};
 
-	// fetchAppraisals();
+	fetchAppraisals();
 
-  	// }, []);
+  	}, []);
 	// STOP HERE
 
 	
 	// MOCK DATA
-    const appraisals = [
-        { employeeName: 'Sarah Lee', department: 'manu', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', hodID: 'hodododd', formID: '123' },
-        { employeeName: 'Lebron James', department: 'manu', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', hodID: 'hodfwododd', formID: '1212' },
-        { employeeName: 'Freddy', department: 'manu', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', hodID: 'wqeadsf', formID: '3454' },
-        { employeeName: 'Father Loh', department: 'manu', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', hodID: 'hoasddodasdodd', formID: '24123' }
-    ];
+    // const appraisals = [
+    //     { employeeName: 'Sarah Lee', department: 'manu', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', hodID: 'hodododd', formID: '123' },
+    //     { employeeName: 'Lebron James', department: 'manu', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', hodID: 'hodfwododd', formID: '1212' },
+    //     { employeeName: 'Freddy', department: 'manu', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', hodID: 'wqeadsf', formID: '3454' },
+    //     { employeeName: 'Father Loh', department: 'manu', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', hodID: 'hoasddodasdodd', formID: '24123' }
+    // ];
 
 
 	const handleHrViewClick = (formID, HR_ID, employeeName, department, type) => {
