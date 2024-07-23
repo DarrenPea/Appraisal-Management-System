@@ -6,8 +6,8 @@ import { LogOut } from 'lucide-react';
 
 function HrHome() {
 	const {state} = useLocation();
-	const {staffID} = state;
-	const staffIDUpper = staffID.toUpperCase();
+	const {staffID, name} = state;
+	const nameUpper = name.toUpperCase();
 
     const navigate = useNavigate();
     const handlelogoutSubmit = (event) => {
@@ -19,7 +19,7 @@ function HrHome() {
         <div className="hrhome-body">
             <div className="containerhr">
                 <div className='home-header'>
-                    <h1>WELCOME, {staffIDUpper} [HR]</h1>
+                    <h1>WELCOME, {nameUpper} [HR]</h1>
                     <button className='logout-button' onClick={handlelogoutSubmit}>Logout <LogOut style={{marginLeft: '6px'}} /></button>
                 </div>
                 <main>
@@ -27,7 +27,7 @@ function HrHome() {
                         <h2>Pending Appraisals:</h2>
                     </div>
                     <div className='hr-table-container'>
-                    <HrHomeTable HR_ID={staffID}/>
+                    <HrHomeTable HR_ID={staffID} name={name} />
                     </div>
                 </main>
             </div>

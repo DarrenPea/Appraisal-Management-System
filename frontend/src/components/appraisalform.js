@@ -1,69 +1,178 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import '../css/style_appraisalform.css'
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function AppraisalForm() {
 	const {state} = useLocation();
-	const {formID, staffID, role, employeeName, department, type} = state;
+	const {formID, staffID, role, employeeName, department, type, staffName, employeeID} = state;
 	const navigate = useNavigate();
 
+	console.log(staffName);
 	const [modalVisible, setModalVisible] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+	const [details, setDetails] = useState({});
 	
 	const [formData, setFormData] = useState({
 		formID,
-		a1: 'sdfdsfsdgdsg',
-		a2_1: 'sdfdsfsdgdsg',
-		a2_2: '',
-		a2_3: '',
-		a2_4: '',
-		a2_5: 'dws',
-		a2_6: '',
-		a2_7: '',
-		a2_8: '',
-		a3_1: '',
-		commentsA3_1: '',
-		a3_2: '',
-		commentsA3_2: '',
-		a3_3: '3',
-		commentsA3_3: '',
-		a3_4: '1',
-		commentsA3_4: '',
-		a3_5: '',
-		commentsA3_5: '',
-		a3_6: '',
-		commentsA3_6: '',
-		a3_7: '',
-		commentsA3_7: '',
-		a3_8: '',
-		commentsA3_8: '',
-		a3_9: '',
-		commentsA3_9: '',
-		a3_10: '',
-		commentsA3_10: '',
-		a3_11: '',
-		commentsA3_11: '',
-		a3_12: '',
-		commentsA3_12: '',
-		a3_13: '',
-		commentsA3_13: '',
-		a3_14: '',
-		commentsA3_14: '',
-		a3_15: '',
-		commentsA3_15: '',
-		a3_16: '',
-		commentsA3_16: '',
-		a3_17: '',
-		commentsA3_17: '',
-		a3_18: '',
-		commentsA3_18: '',
-		a3_19: '',
-		commentsA3_19: '',
-		a3_20: '',
-		commentsA3_20: '',
+		A1: '',
+		A2_1: '',
+		A2_2: '',
+		A2_3: '',
+		A2_4: '',
+		A2_5: '',
+		A2_6: '',
+		A2_7: '',
+		A2_8: '',
+		A3_1: '',
+		CommentsA3_1: '',
+		A3_2: '',
+		CommentsA3_2: '',
+		A3_3: '',
+		CommentsA3_3: '',
+		A3_4: '',
+		CommentsA3_4: '',
+		A3_5: '',
+		CommentsA3_5: '',
+		A3_6: '',
+		CommentsA3_6: '',
+		A3_7: '',
+		CommentsA3_7: '',
+		A3_8: '',
+		CommentsA3_8: '',
+		A3_9: '',
+		CommentsA3_9: '',
+		A3_10: '',
+		CommentsA3_10: '',
+		A3_11: '',
+		CommentsA3_11: '',
+		A3_12: '',
+		CommentsA3_12: '',
+		A3_13: '',
+		CommentsA3_13: '',
+		A3_14: '',
+		CommentsA3_14: '',
+		A3_15: '',
+		CommentsA3_15: '',
+		A3_16: '',
+		CommentsA3_16: '',
+		A3_17: '',
+		CommentsA3_17: '',
+		A3_18: '',
+		CommentsA3_18: '',
+		A3_19: '',
+		CommentsA3_19: '',
+		A3_20: '',
+		CommentsA3_20: '',
 		overallRating: '',
-		b: 'so im the hod'
+		B: ''
 	})
+
+	useEffect(() => {
+		const fetchDetails = async() => {
+			try {
+				const responseDetails = await axios.post('http://localhost:3000/employee/details', {employeeID});
+				const responseDetailsData = responseDetails.data[0];
+
+				const details = {
+					jobFunction: responseDetailsData.jobFunction,
+					KPI: responseDetailsData.KPI,
+					disciplinary: responseDetailsData.disciplinaryRecord,
+					attendanceRecords: responseDetailsData.attendanceRecord
+				};
+				setDetails(details);
+			} catch (error) {
+				console.error('Error fetching data', error);
+			}
+		}
+
+		const fetchOriginalForm = async() => {
+			try {
+				const originalFormResponse = await axios.post('http://localhost:3000/form/retrieve', { formID });
+				const originalFormResponseData = originalFormResponse.data[0];
+
+				const replaceNullWithEmptyString = (data) => {
+					const result = {};
+					for (const key in data) {
+						if (data[key] === null) {
+							result[key] = "";
+						} else {
+							result[key] = data[key];
+						}
+					}
+					return result;
+				};
+
+				const cleanedForm = replaceNullWithEmptyString(originalFormResponseData);
+				
+
+				const originalForm = {
+					formID,
+					A1: cleanedForm.A1,
+					A2_1: cleanedForm.A2_1,
+					A2_2: cleanedForm.A2_2,
+					A2_3: cleanedForm.A2_3,
+					A2_4: cleanedForm.A2_4,
+					A2_5: cleanedForm.A2_5,
+					A2_6: cleanedForm.A2_6,
+					A2_7: cleanedForm.A2_7,
+					A2_8: cleanedForm.A2_8,
+					A3_1: cleanedForm.A3_1,
+					CommentsA3_1: cleanedForm.CommentsA3_1,
+					A3_2: cleanedForm.A3_2,
+					CommentsA3_2: cleanedForm.CommentsA3_2,
+					A3_3: cleanedForm.A3_3,
+					CommentsA3_3: cleanedForm.CommentsA3_3,
+					A3_4: cleanedForm.A3_4,
+					CommentsA3_4: cleanedForm.CommentsA3_4,
+					A3_5: cleanedForm.A3_5,
+					CommentsA3_5: cleanedForm.CommentsA3_5,
+					A3_6: cleanedForm.A3_6,
+					CommentsA3_6: cleanedForm.CommentsA3_6,
+					A3_7: cleanedForm.A3_7,
+					CommentsA3_7: cleanedForm.CommentsA3_7,
+					A3_8: cleanedForm.A3_8,
+					CommentsA3_8: cleanedForm.CommentsA3_8,
+					A3_9: cleanedForm.A3_9,
+					CommentsA3_9: cleanedForm.CommentsA3_9,
+					A3_10: cleanedForm.A3_10,
+					CommentsA3_10: cleanedForm.CommentsA3_10,
+					A3_11: cleanedForm.A3_11,
+					CommentsA3_11: cleanedForm.CommentsA3_11,
+					A3_12: cleanedForm.A3_12,
+					CommentsA3_12: cleanedForm.CommentsA3_12,
+					A3_13: cleanedForm.A3_13,
+					CommentsA3_13: cleanedForm.CommentsA3_13,
+					A3_14: cleanedForm.A3_14,
+					CommentsA3_14: cleanedForm.CommentsA3_14,
+					A3_15: cleanedForm.A3_15,
+					CommentsA3_15: cleanedForm.CommentsA3_15,
+					A3_16: cleanedForm.A3_16,
+					CommentsA3_16: cleanedForm.CommentsA3_16,
+					A3_17: cleanedForm.A3_17,
+					CommentsA3_17: cleanedForm.CommentsA3_17,
+					A3_18: cleanedForm.A3_18,
+					CommentsA3_18: cleanedForm.CommentsA3_18,
+					A3_19: cleanedForm.A3_19,
+					CommentsA3_19: cleanedForm.CommentsA3_19,
+					A3_20: cleanedForm.A3_20,
+					CommentsA3_20: cleanedForm.CommentsA3_20,
+					overallRating: cleanedForm.overallRating,
+					B: cleanedForm.B
+				};
+				setFormData(originalForm);
+			} catch (error) {
+				console.log('Error fetching data', error);
+			}
+		};
+		
+		if(role === 'hod') {
+			fetchDetails();
+		}
+		fetchOriginalForm();
+
+	}, [formID, employeeID, role]);
+
 
 	const handleAppraisalFormChange = (e) => {
         const { name, value } = e.target;
@@ -72,9 +181,9 @@ function AppraisalForm() {
             [name]: value
         };
 
-        if (name.startsWith('a3_') && name !== 'commentsA3_') {
+        if (name.startsWith('A3_') && name !== 'commentsA3_') {
             const ratings = Object.keys(updatedFormData)
-                .filter(key => key.startsWith('a3_') && !key.startsWith('comments'))
+                .filter(key => key.startsWith('A3_') && !key.startsWith('comments'))
                 .map(key => parseInt(updatedFormData[key], 10) || 0);
 
             const total = ratings.reduce((acc, curr) => acc + curr, 0);
@@ -86,32 +195,29 @@ function AppraisalForm() {
         setFormData(updatedFormData);
     };
 
-	const handleAppraisalSubmit = (e) => {
-        e.preventDefault();
+	// const handleAppraisalSubmit = (e) => {
+    //     e.preventDefault();
 
-        if (window.confirm("Are you sure you want to submit the appraisal form?")) {
-            setModalVisible(true);
-        }
-    };
+    //     if (window.confirm("Are you sure you want to submit the appraisal form?")) {
+    //         setModalVisible(true);
+    //     }
+    // };
 	
 	const handleAppraisalOK = (e) => {
 		e.preventDefault();
-
-		setModalVisible(true);
+		navigate('/hr', {state: {staffID, name: staffName}});
 	}
 
-	// const handleAppraisalSubmit = (e) => {
-	// 	e.preventDefault();
+	const handleAppraisalSubmit = (e) => {
+		e.preventDefault();
+
+		// call axios here to post answers
 
 
-
-	// 	navigate('/form', { state: { formID , role: "hod"} });
-
-	
-
-
-	// 	// call axios here to post answers
-	// }
+		if (window.confirm("Are you sure you want to submit the appraisal form?")) {
+            setModalVisible(true);
+        }
+	}
 
 
 	const handleConfirm = () => {
@@ -120,9 +226,25 @@ function AppraisalForm() {
 
 
 		// checking
+		console.log("TESTING");
 		console.log(formData);
 
-		navigate(`/${role}`, {state: {staffID}});
+		if(role === 'employee') {
+			axios.post('http://localhost:3000/form/employee/submit', formData)
+			.then(response => {
+				console.log("Form submitted successfully:", response);
+				navigate('/employee', {state: {staffID, name: staffName}});
+			});
+		}
+		if(role === 'hod') {
+			axios.post('http://localhost:3000/form/HOD/submit', formData)
+			.then(response => {
+				console.log("Form submitted successfully:", response);
+				navigate('/hod', {state: {staffID, name: staffName}});
+			});
+		}
+
+
 
         // call axios here to post answers
 		
@@ -195,9 +317,47 @@ function AppraisalForm() {
 		<div className="appraisal-body">
 			<div className="appraisal-form-page">
 				<header>
-					<h1>Appraisal Form</h1>
-					<h2>{formData.formID} (to check)</h2>
+					<h1>Appraisal Form ID: {formData.formID}</h1>
 				</header>
+				{role === 'employee' && (
+				<div className="appraisal-employee-details">
+					<h3>Name: {employeeName}</h3>
+					<h3>Department: {department}</h3>
+				</div>
+				)}
+				{role === 'hr' && (
+				<div className="appraisal-employee-details">
+					<h3>Name: {employeeName}</h3>
+					<div className="appraisal-employee-finer">
+						<h4>Department: {department}</h4>
+						<h4>Purpose: {type}</h4>
+					</div>
+				</div>
+				)}
+				{role === 'hod' && (
+				<div className="appraisal-employee-details">
+					<h2>Employee Details</h2>
+					<h3>Employee Name: {employeeName}</h3>
+					<table className="appraisal-employee-details-table">
+						<thead>
+							<tr>
+								<th className="appraisal-job">Job Function</th>
+								<th className="appraisal-kpi">KPI</th>
+								<th className="appraisal-disciplinary">Disciplinary Record</th>
+								<th className="appraisal-attendance">Attendance Record</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{details.jobFunction}</td>
+								<td>{details.KPI}</td>
+								<td>{details.disciplinary}</td>
+								<td>{details.attendanceRecords}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				)}
 				<main>
 					<div className="appraisal-form-container">
 						<form className="appraisal-form" id="appraisal-form" onSubmit={handleAppraisalSubmit}>
@@ -205,21 +365,21 @@ function AppraisalForm() {
 							<h3>A1 Role & Responsibilities</h3>
 							{role === 'employee' && (
 								<>
-								<label htmlFor="a1">A1 Elaborate your understanding of your primary role and responsibilities:</label>
-								<textarea id="a1" name="a1" rows="5" value={formData.a1} onChange={handleAppraisalFormChange} required></textarea>
+								<label htmlFor="A1">A1 Elaborate your understanding of your primary role and responsibilities:</label>
+								<textarea id="A1" name="A1" rows="5" value={formData.A1} onChange={handleAppraisalFormChange} required></textarea>
 								</>
 							)}
 							{(role === 'hod' || role === 'hr') && (
 								<>
-								<label htmlFor="a1">A1 Elaborate your understanding of your primary role and responsibilities:</label>
-								<p className="employee_section_a1" id="a1" name="a1">{formData.a1}</p>
+								<label htmlFor="A1">A1 Elaborate your understanding of your primary role and responsibilities:</label>
+								<p className="employee_section_a1" id="A1" name="A1">{formData.A1}</p>
 								</>
 							)}
 
 							<h3>A2 Discussion</h3>
 							{role === 'employee' && (
 								<>
-								{['a2_1', 'a2_2', 'a2_3', 'a2_4', 'a2_5', 'a2_6', 'a2_7', 'a2_8'].map((field, index) => (
+								{['A2_1', 'A2_2', 'A2_3', 'A2_4', 'A2_5', 'A2_6', 'A2_7', 'A2_8'].map((field, index) => (
 									<div key={index} className="appraisal-a2-div">
 										<label htmlFor={field}>{a2Labels[index]}</label>
 										<textarea id={field} name={field} rows="5" value={formData[field]} onChange={handleAppraisalFormChange} required></textarea>
@@ -229,7 +389,7 @@ function AppraisalForm() {
 							)}
 							{(role === 'hod' || role === 'hr') && (
 								<>
-								{['a2_1', 'a2_2', 'a2_3', 'a2_4', 'a2_5', 'a2_6', 'a2_7', 'a2_8'].map((field, index) => (
+								{['A2_1', 'A2_2', 'A2_3', 'A2_4', 'A2_5', 'A2_6', 'A2_7', 'A2_8'].map((field, index) => (
 									<div key={index} className="appraisal-a2-div">
 										<label htmlFor={field}>{a2Labels[index]}</label>
 										<p className="employee_section_a2" id={field} name={field}>{formData[field]}</p>
@@ -237,31 +397,6 @@ function AppraisalForm() {
 								))}
 								</>
 							)}
-								
-								
-							{/* <label htmlFor="a2_1">A2.1 Elaborate if the past year been good/bad/satisfactory for you:</label>
-							<textarea id="a2_1" name="a2_1" rows="5" required></textarea>
-
-							<label htmlFor="a2_2">A2.2 What do you consider to be your most important achievements of the past months/years:</label>
-							<textarea id="a2_2" name="a2_2" rows="5" required></textarea>
-
-							<label htmlFor="a2_3">A2.3 What elements of your job do you find most difficult and challenging:</label>
-							<textarea id="a2_3" name="a2_3" rows="5" required></textarea>
-
-							<label htmlFor="a2_4">A2.4 What do you consider to be your most important goal and objective for next year:</label>
-							<textarea id="a2_4" name="a2_4" rows="5" required></textarea>
-
-							<label htmlFor="a2_5">A2.5 What recommendable action could be taken by you and/or your boss to improve your performance in your current function:</label>
-							<textarea id="a2_5" name="a2_5" rows="5" required></textarea>
-
-							<label htmlFor="a2_6">A2.6 What kind of work do you like to doing in one/three/five years' time:</label>
-							<textarea id="a2_6" name="a2_6" rows="5" required></textarea>
-
-							<label htmlFor="a2_7">A2.7 What kind of training/experience would develop your strength which will benefit you and your work in the next year?: </label>
-							<textarea id="a2_7" name="a2_7" rows="5" required></textarea>
-							
-							<label htmlFor="a2_8">A2.8 List the objectives you set out to achieve in the past 12 months (or the period covered by this appraisal) with the measures or standards agreed - against each comment on achievement or otherwise, with reasons where appropriate. Score the performance against each objective as per below Section A3 rating:</label>
-							<textarea id="a2_8" name="a2_8" rows="5" required></textarea> */}
 
 
 							<h3>A3 Evaluating your own capability:</h3>
@@ -272,7 +407,7 @@ function AppraisalForm() {
 								{role === 'employee' && (
 									<>
 									{Array.from({ length: ratingLabels.length }, (_, index) => {
-										const field = `a3_${index + 1}`;
+										const field = `A3_${index + 1}`;
 										
 										return (
 											<div key={index} className="rating-row">
@@ -290,577 +425,51 @@ function AppraisalForm() {
 									})}
 									</>
 								)}
-								{(role === 'hod' || role === 'hr') && (
+								{(role === 'hod') && (
 									<>
-									{/* {Array.from({ length: ratingLabels.length }, (_, index) => {
-										const field = `a3_${index + 1}`;
-										
-										return ( */}
-											<div className="rating-row-nonemployee">
-												<table className="rating-table-view">
-												<tbody>
-												{['a3_1', 'a3_2', 'a3_3', 'a3_4', 'a3_5', 'a3_6', 'a3_7', 'a3_8', 'a3_9', 'a3_10', 'a3_11', 'a3_12', 'a3_13', 'a3_14', 'a3_15'].map((field, index) => (
-													<tr key={field}>
-														<td className="rating-label-view">{ratingLabels[index]}</td>
-														<td className="rating-answer-view">{formData[field]}</td>
+									{Array.from({ length: ratingLabels.length }, (_, index) => {
+										const field = `CommentsA3_${index + 1}`;
 
-
-														{/* <label htmlFor={field}>{a2Labels[index]}</label>
-														<text className="employee_section_a2" id={field} name={field}>{formData[field]}</text> */}
-													</tr>
-												))}
-													{/* <tr>
-														<td className="rating-label-view">Job Function</td>
-														<td className="rating-answer-view">{data.jobFunction}</td>
-													</tr>
-													<tr>
-														<td className="rating-label-view">KPI</td>
-														<td className="rating-answer-view">{data.KPI}</td>
-													</tr>
-													<tr>
-														<td className="rating-label-view">Disciplinary Records</td>
-														<td className="rating-answer-view">{data.disciplinary}</td>
-													</tr>
-													<tr>
-														<td className="rating-label-view">Attendence Records</td>
-														<td className="rating-answer-view">{data.attendanceRecords}</td>
-													</tr> */}
-												</tbody>
-												</table>
-												{/* <label className="rating-label">{ratingLabels[index]}</label>
-												<text className="employee_section_a3" id={field} name={field}>{formData[field]}</text> */}
+										return (
+											<div key={index} className="rating-row-nonemployee">
+												<div className="individual-rating-nonemployee">
+													<p>{ratingLabels[index]}: {formData[`A3_${index + 1}`]}</p>
+												</div>
+												<textarea className='individual-rating-input' id={field} name={field} rows="2" value={formData[field]} onChange={handleAppraisalFormChange}></textarea>
 											</div>
-										{/* ); */}
-									{/* })} */}
+										);
+									})}
 									</>
 								)}
+								{(role === 'hr') && (
+									<>
+									{Array.from({ length: ratingLabels.length }, (_, index) => {
+										const field = `CommentsA3_${index + 1}`;
 
-								
-								
-								{/* <div className="rating-row">
-									<label htmlFor="a3_1" className="rating-label">Corporate Responsibility & Ethics</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_1" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_1" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_1" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_1" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_1" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_2" className="rating-label">Job/Technical Knowledge</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_2" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_2" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_2" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_2" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_2" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-								
-								<div className="rating-row">
-									<label htmlFor="a3_3" className="rating-label">Time Management</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_3" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_3" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_3" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_3" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_3" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_4" className="rating-label">Planning, Budgeting and Forecasting</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_4" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_4" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_4" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_4" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_4" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_5" className="rating-label">Reporting & Administrative Skills</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_5" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_5" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_5" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_5" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_5" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_6" className="rating-label">Delegation Skills</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_6" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_6" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_6" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_6" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_6" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_7" className="rating-label">Problem Solving & Decision Making</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_7" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_7" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_7" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_7" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_7" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_8" className="rating-label">Meeting Deadlines/Commitments</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_8" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_8" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_8" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_8" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_8" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_9" className="rating-label">Work Creativity</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_9" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_9" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_9" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_9" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_9" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_10" className="rating-label">Team-working and Developing Others</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_10" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_10" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_10" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_10" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_10" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_11" className="rating-label">Work Initiative</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_11" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_11" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_11" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_11" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_11" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_12" className="rating-label">Energy, Determination and Work-Rate</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_12" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_12" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_12" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_12" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_12" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_13" className="rating-label">Work Responsibility</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_13" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_13" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_13" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_13" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_13" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_14" className="rating-label">Steadiness under Pressure</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_14" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_14" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_14" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_14" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_14" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_15" className="rating-label">Leadership and Integrity</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_15" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_15" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_15" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_15" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_15" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_16" className="rating-label">Adaptability, Flexibility and Mobility</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_16" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_16" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_16" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_16" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_16" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_17" className="rating-label">IT/Equipment/Machinery Skill</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_17" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_17" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_17" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_17" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_17" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_18" className="rating-label">Communication Skills</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_18" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_18" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_18" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_18" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_18" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_19" className="rating-label">Personal Appearance and image</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_19" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_19" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_19" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_19" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_19" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div>
-
-								<div className="rating-row">
-									<label htmlFor="a3_20" className="rating-label">Attendance/Punctuality</label>
-									<div className="rating-options">
-										<label>
-											<input type="radio" name="a3_20" value="1" required /> 
-											<span>1</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_20" value="2" />
-											<span>2</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_20" value="3" />
-											<span>3</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_20" value="4" />
-											<span>4</span>
-										</label>
-										<label>
-											<input type="radio" name="a3_20" value="5" />
-											<span>5</span>
-										</label>
-									</div>
-								</div> */}
-
+										return (
+											<div key={index} className="rating-row-nonemployee">
+												<div className="individual-rating-nonemployee">
+													<p>{ratingLabels[index]}: {formData[`A3_${index + 1}`]}</p>
+												</div>
+												<p className='individual-rating-text' id={field} name={field} >{formData[field]}</p>
+											</div>
+										);
+									})}
+									</>
+								)}
+								{role === 'employee' && (
 								<div className="overall-score">
-                                    <label htmlFor="overallRating">Overall Rating:</label>
-                                    <p className="overallRating">{`${formData.overallRating} / 5`}</p>
-                                </div>
+									<label htmlFor="overallRating">Overall Rating:</label>
+									<p className="overallRating">{formData.overallRating === null ? 0 : `${formData.overallRating} / 5`}</p>
+								</div>
+								)}
+								{(role === 'hod' || role === 'hr') && (
+								<div className="overall-score-nonemployee">
+									<label htmlFor="overallRating">Overall Rating:</label>
+									<p className="overallRating">{formData.overallRating === null ? 0 : `${formData.overallRating} / 5`}</p>
+								</div>
+								)}
+
 								
 							</div>
 
@@ -868,8 +477,8 @@ function AppraisalForm() {
 							{(role === 'hod') && (
 								<>
 								<h3>Evaluation</h3>
-								<label htmlFor="b">Describe the purpose of the appraiser's job function. Review and discuss self-appraisal entries; appraiser's career direction options and wishes. Aprpaiser may like to discuss on specific objectives that will enable the appraisee to reach competence and to meet required performance in cuurent job, or achieve readiness for, the next job level/type, or if no particular next role is identified or sought, to achieve the desired personal growth or experience. These objectives must adhere to the SMARTER rules - specific, measurable, agreed, realistic, time-bound, ethical, recorded. Training and development support maybe discuss to help the appraisee to meet the agreed objectives above. Other issues maybe covered (if any).</label>
-								<textarea id='b' name='b' rows="5" value={formData.b} onChange={handleAppraisalFormChange} required></textarea>
+								<label htmlFor="B">Describe the purpose of the appraiser's job function. Review and discuss self-appraisal entries; appraiser's career direction options and wishes. Aprpaiser may like to discuss on specific objectives that will enable the appraisee to reach competence and to meet required performance in cuurent job, or achieve readiness for, the next job level/type, or if no particular next role is identified or sought, to achieve the desired personal growth or experience. These objectives must adhere to the SMARTER rules - specific, measurable, agreed, realistic, time-bound, ethical, recorded. Training and development support maybe discuss to help the appraisee to meet the agreed objectives above. Other issues maybe covered (if any).</label>
+								<textarea id='B' name='B' rows="5" value={formData.B} onChange={handleAppraisalFormChange} required></textarea>
 								</>
 							)}
 
@@ -877,9 +486,9 @@ function AppraisalForm() {
 								<>
 								<h3>Evaluation</h3>
 								<label htmlFor="b">Describe the purpose of the appraiser's job function. Review and discuss self-appraisal entries; appraiser's career direction options and wishes. Aprpaiser may like to discuss on specific objectives that will enable the appraisee to reach competence and to meet required performance in cuurent job, or achieve readiness for, the next job level/type, or if no particular next role is identified or sought, to achieve the desired personal growth or experience. These objectives must adhere to the SMARTER rules - specific, measurable, agreed, realistic, time-bound, ethical, recorded. Training and development support maybe discuss to help the appraisee to meet the agreed objectives above. Other issues maybe covered (if any).</label>
-								<p className='hod-section-b' id='b' name='b'>{formData.b}</p>
+								<p className='hod-section-b' id='b' name='b'>{formData.B}</p>
 								
-								<button className="hr-ok-btn" onClick={handleAppraisalOK}>Next</button>
+								<button className="hr-ok-btn" onClick={handleAppraisalOK}>OK</button>
 								</>
 							)}
 							{(role === 'employee' || role === 'hod') && (

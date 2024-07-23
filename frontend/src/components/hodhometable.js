@@ -4,8 +4,10 @@ import Modal from './modal';
 import AppraisalForm from './appraisalform';
 import { useNavigate } from 'react-router-dom';
 
-function HodHomeTable( { HOD_ID }) {
+function HodHomeTable( { HOD_ID, name}) {
     const [showModal, setShowModal] = useState(false);
+    const [currentEmployeeID, setCurrentEmployeeID] = useState(null);
+    const [currentEmployeeName, setCurrentEmployeeName] = useState(null);
     const navigate = useNavigate();
 
 
@@ -41,19 +43,18 @@ function HodHomeTable( { HOD_ID }) {
             try {
                 const firstResponse = await axios.post('http://localhost:3000/form/HOD/status', { HOD_ID });
                 const appraisalData = firstResponse.data;
-
+                
+                console.log("data", appraisalData)
                 // Ensure data is in an array format
                 const appraisalArray = Array.isArray(appraisalData) ? appraisalData : [appraisalData];
                 console.log("array", appraisalArray);
                 
-                if(appraisalArray[0].length === 0) {
+                if(appraisalArray.length === 0) {
                     setAppraisals({formID: null})
                     return
                 }
 
-                const staffPromises = appraisalData.map(async (item) => {
-                    console.log("item", item.employeeID);
-                    console.log("here1: fetching second response");
+                const staffPromises = appraisalArray.map(async (item) => {
 
                     try {
                         const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
@@ -125,8 +126,14 @@ function HodHomeTable( { HOD_ID }) {
     //     { employeeID: 'Fath', employeeName: 'Father Loh', department: 'manufacturing', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', formID: '4' }
     // ];
 
-    const handleHodFillUpClick = (formID, HOD_ID, employeeName, department, type) => {
-		navigate('/form', { state: { formID , staffID: HOD_ID, role: "hod", employeeName, department, type } });
+    const handleViewClick = (employeeID, employeeName) => {
+        setCurrentEmployeeID(employeeID);
+        setCurrentEmployeeName(employeeName);
+        setShowModal(true);
+    };
+
+    const handleHodFillUpClick = (formID, HOD_ID, employeeName, department, type, employeeID) => {
+		navigate('/form', { state: { formID , staffID: HOD_ID, role: "hod", employeeName, department, type, employeeID, staffName: name } });
 	};
 
     return (
@@ -180,17 +187,17 @@ function HodHomeTable( { HOD_ID }) {
                         <td className='hod-view'>
                             <button
                                 className='hod-view-btn'
-                                onClick={() => setShowModal(true)}
+                                onClick={() => handleViewClick(appraisal.employeeID, appraisal.employeeName)}
                             >
-                                View    
+                                View
                             </button>
-                            {showModal && <Modal onClose={() => setShowModal(false)} employeeID={appraisal.employeeID} employeeName={appraisal.employeeName}/>}
+                            {showModal && <Modal onClose={() => setShowModal(false)} employeeID={currentEmployeeID} employeeName={currentEmployeeName}/>}
                         </td>
                         <td>
                             <button
-                                className={`hod-fill-up-btn ${appraisal.status === '1' ? 'disabled' : ''}`}
-                                disabled={appraisal.status === '1'}
-                                onClick={() => handleHodFillUpClick(appraisal.formID, HOD_ID, appraisal.employeeName, appraisal.department, appraisal.type)}
+                                className={`hod-fill-up-btn ${(appraisal.status === 1 || appraisal.employeeStatus === 0) ? 'disabled' : ''}`}
+                                disabled={appraisal.status === 1 || appraisal.employeeStatus === 0}
+                                onClick={() => handleHodFillUpClick(appraisal.formID, HOD_ID, appraisal.employeeName, appraisal.department, appraisal.type, appraisal.employeeID)}
                             >
                                 Fill up
                             </button>

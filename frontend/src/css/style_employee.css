@@ -103,7 +103,12 @@ td {
 
 .employee-table td:last-child {
     text-align: center;
-    width: 15%;
+    white-space: nowrap;
+    width: 16%;
+}
+
+.employee-table td:nth-last-child(3) {
+    white-space: nowrap;
 }
 
 .employee-status-pending {
@@ -111,7 +116,7 @@ td {
 }
 
 .employee-status-submitted {
-    color: green;
+    color: rgb(15, 190, 15);
 }
 
 .employee-fill-up-btn {

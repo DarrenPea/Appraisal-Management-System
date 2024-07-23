@@ -59,6 +59,16 @@ h1 {
     border-radius: 5px;
 }
 
+.no-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.no-actions p {
+    font-size: 1.2em;
+    color: rgb(7, 199, 7);
+}
+
 main {
     display: flex;
     flex-direction: column;
@@ -98,6 +108,11 @@ td {
 .hod-table td:last-child {
     text-align: center;
     width: 13%;
+    white-space: nowrap;
+}
+
+.hod-table td:nth-last-child(5) {
+    white-space: nowrap;
 }
 
 .hod-employee-status-pending {
@@ -105,7 +120,7 @@ td {
 }
 
 .hod-employee-status-submitted {
-    color: green;
+    color: rgb(15, 190, 15);
 }
 
 .hod-status-pending {
@@ -113,7 +128,7 @@ td {
 }
 
 .hod-status-submitted {
-    color: green;
+    color: rgb(15, 190, 15);
 }
 
 .hod-view-btn {

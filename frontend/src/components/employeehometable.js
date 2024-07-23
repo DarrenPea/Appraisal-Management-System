@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function EmployeeHomeTable({staffID}) {
+function EmployeeHomeTable({staffID, name}) {
 	const [appraisals, setAppraisals] = useState([]);
 	const navigate = useNavigate();
 
@@ -43,10 +43,9 @@ function EmployeeHomeTable({staffID}) {
 	useEffect(() => {
 		const fetchAppraisals = async () => {
 		  try {
-			console.log("here0");
 			const firstResponse = await axios.post('http://localhost:3000/form/employee/status', { employeeID: staffID });
 			const appraisalData = firstResponse.data;
-	  
+			console.log(firstResponse.data);
 			// Ensure data is in an array format
 			const appraisalArray = Array.isArray(appraisalData) ? appraisalData : [appraisalData];
 			
@@ -56,7 +55,6 @@ function EmployeeHomeTable({staffID}) {
 			}
 	  
 			const staffPromises = appraisalArray.map(async (item) => {
-			  console.log("here1: fetching second response");
 
 			  try {
 				const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: staffID });
@@ -88,11 +86,6 @@ function EmployeeHomeTable({staffID}) {
 	  
 		fetchAppraisals();
 	  }, [staffID]);
-	  
-	  useEffect(() => {
-		// console.log("Updated appraisals:", appraisals.map((appraisal, i) => (appraisal.employeeStatus)));
-		console.log("formid", appraisals.formID!==null)
-	  }, [appraisals]);
 
 
 	// axios.post('http://localhost:3000/form/employee/status', {staffID: staffID})
@@ -107,7 +100,7 @@ function EmployeeHomeTable({staffID}) {
 
 
 	const handleEmployeeFillUpClick = (formID, staffID, employeeName, department, type) => {
-		navigate('/form', { state: { formID , staffID, role: "employee", employeeName, department, type} });
+		navigate('/form', { state: { formID , staffID, role: "employee", employeeName, department, type, staffName: name} });
 	};
 
     return (
@@ -148,9 +141,9 @@ function EmployeeHomeTable({staffID}) {
 						)}
                         <td>
                             <button
-                                className={`employee-fill-up-btn ${appraisal.employeeStatus === '1' ? 'disabled' : ''}`}
-                                disabled={appraisal.employeeStatus === '1'}
-								onClick={() => handleEmployeeFillUpClick(appraisal.formID, staffID, appraisal.employeeName, appraisal.department, appraisal.type)}
+                                className={`employee-fill-up-btn ${appraisal.employeeStatus === 1 ? 'disabled' : ''}`}
+                                disabled={appraisal.employeeStatus === 1}
+								onClick={() => handleEmployeeFillUpClick(appraisal.formID, staffID, appraisal.employeeName, appraisal.department, appraisal.type )}
                             >
                                 Fill up
                             </button>

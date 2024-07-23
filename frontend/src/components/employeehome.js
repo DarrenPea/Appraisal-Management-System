@@ -27,7 +27,7 @@ function EmployeeHome() {
                         <h2>Pending Appraisals:</h2>
                     </div>
                     <div className='employee-table-container'>
-                        <EmployeeHomeTable staffID={staffID} />
+                        <EmployeeHomeTable staffID={staffID} name={name} />
                     </div>
                 </main>
             </div>

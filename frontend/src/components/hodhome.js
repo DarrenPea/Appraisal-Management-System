@@ -27,7 +27,7 @@ function HodHome() {
                         <h2>Pending Appraisals:</h2>
                     </div>
                     <div className='hod-table-container'>
-                        <HodHomeTable HOD_ID={staffID}/>
+                        <HodHomeTable HOD_ID={staffID} name={name} />
                     </div>
                 </main>
             </div>

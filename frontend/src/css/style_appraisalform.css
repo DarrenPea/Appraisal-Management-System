@@ -13,24 +13,76 @@
     width: 90vw;
     max-width: 1200px;
     background-color: #fff;
-    padding: 20px;
+    padding: 20px 30px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin: 40px auto;
 }
+
 .appraisal-form-page h1 {
-	text-align: center;
+	text-align: right;
+    font-weight: normal;
+    font-size: 12px;
+    width: 100%;
+    margin-bottom: 0px;
 }
-.appraisal-form-page h2 {
-	font-size: 1.3em;
-	text-align: center;
+
+.appraisal-employee-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    width: 100%;
 }
+
+.appraisal-employee-details h2 {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0px;
+    font-weight: bolder;
+}
+
+.appraisal-employee-details h3 {
+    text-align: center;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.appraisal-employee-finer {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.appraisal-employee-details h4 {
+    text-align: center;
+    margin-top: 20px ;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.appraisal-employee-details-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.appraisal-employee-details-table th {
+    text-align: center;
+    border: 1.5px solid black;
+}
+
+.appraisal-employee-details-table td {
+    text-align: center;
+}
+
 .appraisal-form-container h3 {
     margin: 20px ; /* Space above and below the header */
     margin-left: 22px;
     font-size: 1.2em;
     color: #333;
-    border-bottom: 1.5px solid #ddd; /* Optional: Add a border under the header */
+    border-bottom: 7.5px solid #ddd; /* Optional: Add a border under the header */
     padding-bottom: 10px;
 	width: 100%;
 }
@@ -81,14 +133,15 @@ form textarea {
 
 .employee_section_a2 {
     margin-top: 10px;
-    margin-bottom: 40px;
     width: 100%;
     white-space: pre-line;
     font-size: 1em;
+    padding-bottom: 40px;
+    border-bottom: 1.5px solid #ddd;
 }
 
 .hod-section-b {
-    margin-top: 15px;
+    margin-top: 25px;
     margin-bottom: 40px;
     width: 100%;
     white-space: pre-line;
@@ -105,6 +158,7 @@ form textarea {
     text-align: center;
     margin-top: 0;
     font-size: 0.95em;
+    margin-bottom: 20px;
 }
 .rating-section {
     flex-direction: column;
@@ -118,12 +172,6 @@ form textarea {
     align-items: center;
     width: 100%;
     border-bottom: 1.5px solid #ddd;
-}
-
-.rating-row-nonemployee {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .rating-label {
@@ -163,6 +211,35 @@ form textarea {
     margin-right: 5px;
 }
 
+.rating-row-nonemployee {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1.5px solid #ddd;
+    margin-top: 15px;
+}
+
+.individual-rating-nonemployee {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #333;
+    text-align: left;
+    width: 100%;
+}
+
+.individual-rating-input {
+    box-sizing: border-box;
+}
+
+.individual-rating-text {
+    margin-top: 0px;
+    margin-bottom: 40px;
+    width: 100%;
+    white-space: pre-line;
+    font-size: 1em;
+}
+
 .rating-table-view {
     margin-top: 30px;
     margin-bottom: 30px;
@@ -181,13 +258,30 @@ form textarea {
     justify-content: flex-end;
 }
 
+.overall-score-nonemployee {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .overall-score p{
+    font-size: 1em;
+}
+
+.overall-score-nonemployee p{
     font-size: 1em;
 }
 
 .overall-score label {
     font-weight: bold;
-    font-size: 0.9em;
+    font-size: 1em;
+    margin-right: 10px;
+    text-align: right;
+}
+
+.overall-score-nonemployee label {
+    font-weight: bold;
+    font-size: 1em;
     margin-right: 10px;
     text-align: right;
 }
@@ -267,7 +361,9 @@ form textarea {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: 10%;
+    min-width: 100px;
+    max-width: 150px;
+    text-align: center;
 }
 
 .hr-ok-btn:hover {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import '../css/modal.css'
 import { X } from 'lucide-react';
+import axios from "axios";
 
 function Modal({ onClose, employeeID, employeeName }) {
 	const modalRef = useRef();
@@ -10,31 +11,33 @@ function Modal({ onClose, employeeID, employeeName }) {
 		}
 	};
 
-	// const [data, setData] = useState({});
+	const [data, setData] = useState({});
 
-	// useEffect(() => {
-	// 	const fetchData = async() => {
-	// 		try {
-	// 			const response = await axios.post('http://localhost:3000/employee/details', {employeeID});
-	// 			const responseData = response.data;
+	useEffect(() => {
+		const fetchData = async() => {
+			try {
+				const response = await axios.post('http://localhost:3000/employee/details', {employeeID});
+				const responseData = response.data[0];
+				console.log("responsedata", responseData);
+				
 
-	// 			const details = responseData.map( (item) => ({
-	// 				jobFunction,
-	// 				KPI,
-	// 				disciplinary: item.disciplinaryRecord,
-	// 				attendanceRecords: item.attendanceRecord
-	// 			}));
-	// 			setData(details);
-	// 		} catch (error) {
-	// 			console.error('Error fetching data', error);
-	// 		}
-	// 	};
+				const details = {
+					jobFunction: responseData.jobFunction,
+					KPI: responseData.KPI,
+					disciplinary: responseData.disciplinaryRecord,
+					attendanceRecords: responseData.attendanceRecord
+				};
+				setData(details);
+			} catch (error) {
+				console.error('Error fetching data', error);
+			}
+		};
 
-	// 	fetchData();
-	// }, []);
+		fetchData();
+	}, [employeeID]);
 
 
-	const data = { jobFunction: 'HR', KPI: '100%', disciplinary: '0', attendanceRecords: '100%' };
+	// const data = { jobFunction: 'HR', KPI: '100%', disciplinary: '0', attendanceRecords: '100%' };
 
 
 	return (
@@ -54,11 +57,11 @@ function Modal({ onClose, employeeID, employeeName }) {
 								<td className="hod-modal-detail">{data.KPI}</td>
 							</tr>
 							<tr>
-								<td className="hod-modal-title">Disciplinary Records</td>
+								<td className="hod-modal-title">Disciplinary Record</td>
 								<td className="hod-modal-detail">{data.disciplinary}</td>
 							</tr>
 							<tr>
-								<td className="hod-modal-title">Attendence Records</td>
+								<td className="hod-modal-title">Attendence Record</td>
 								<td className="hod-modal-detail">{data.attendanceRecords}</td>
 							</tr>
 						</tbody>

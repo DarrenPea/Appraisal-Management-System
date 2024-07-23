@@ -95,12 +95,16 @@ td {
     width: 13%;
 }
 
+.hr-table td:nth-last-child(4) {
+    white-space: nowrap;
+}
+
 .hr-employee-status-pending {
     color: red;
 }
 
 .hr-employee-status-submitted {
-    color: green;
+    color: rgb(15, 190, 15);
 }
 
 .hr-hod-status-pending {
@@ -108,7 +112,7 @@ td {
 }
 
 .hr-hod-status-submitted {
-    color: green;
+    color: rgb(15, 190, 15);
 }
 
 .hr-view-btn {
