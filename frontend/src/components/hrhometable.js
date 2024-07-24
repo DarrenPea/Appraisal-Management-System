@@ -44,7 +44,7 @@ function HrHomeTable( { HR_ID, name } ) {
 			const appraisalArray = Array.isArray(appraisalData) ? appraisalData : [appraisalData];
                 console.log("array", appraisalArray);
                 
-                if(appraisalArray.length === 0) {
+                if(appraisalArray[0].length === 0) {
                     setAppraisals({formID: null})
                     return
                 }

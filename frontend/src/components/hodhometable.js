@@ -41,7 +41,8 @@ function HodHomeTable( { HOD_ID, name}) {
     useEffect(() => {
         const fetchAppraisals = async() => {
             try {
-                const firstResponse = await axios.post('http://localhost:3000/form/HOD/status', { HOD_ID });
+                console.log("TESTFRONT",HOD_ID);
+                const firstResponse = await axios.post('http://localhost:3000/form/hod/status', { hodID: HOD_ID });
                 const appraisalData = firstResponse.data;
                 
                 console.log("data", appraisalData)
@@ -49,7 +50,7 @@ function HodHomeTable( { HOD_ID, name}) {
                 const appraisalArray = Array.isArray(appraisalData) ? appraisalData : [appraisalData];
                 console.log("array", appraisalArray);
                 
-                if(appraisalArray.length === 0) {
+                if(appraisalArray[0].length === 0) {
                     setAppraisals({formID: null})
                     return
                 }

@@ -237,7 +237,7 @@ function AppraisalForm() {
 			});
 		}
 		if(role === 'hod') {
-			axios.post('http://localhost:3000/form/HOD/submit', formData)
+			axios.post('http://localhost:3000/form/hod/submit', formData)
 			.then(response => {
 				console.log("Form submitted successfully:", response);
 				navigate('/hod', {state: {staffID, name: staffName}});
