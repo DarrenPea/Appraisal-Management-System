@@ -18,10 +18,14 @@ function Login () {
             // const validUser = data[0].valid_user;
             const role = data[0].role;
 
-            if (data[0]===1 || data[0]===2) {
+            if (data[0]===1) {
                 //if pw or ID wrong
                 //TODO: SHOULD indicate pw or username fail
-                alert(res.data.Error);
+                // alert(res.data.Error);
+                alert("Wrong username!");
+            }
+            else if (data[0]===2) {
+                alert("Wrong password!");
             }
             else{
                 if (role === "HR") {
