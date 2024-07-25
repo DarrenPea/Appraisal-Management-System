@@ -20,11 +20,11 @@ function Login () {
             const role = data[0].role;
 
             // non-existent username is entered
-            if (data[0]===1) {
+            if (data[0] === 1) {
                 alert("Wrong username!");
             }
             // username exists but wrong password
-            else if (data[0]===2) {
+            else if (data[0] === 2) {
                 alert("Wrong password!");
             }
             // correct username and password, leads user to their respective home page
