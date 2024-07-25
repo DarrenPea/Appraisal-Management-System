@@ -45,6 +45,7 @@
 .modal-employee-name {
 	font-weight: bold;
 	font-size: 1.8em;
+    text-align: center;
 }
 
 .hod-modal-table {

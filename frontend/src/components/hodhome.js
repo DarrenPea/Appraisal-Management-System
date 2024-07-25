@@ -8,8 +8,9 @@ function HodHome() {
 	const {state} = useLocation();
 	const {staffID, name} = state;
 	const nameUpper = name.toUpperCase();
-
     const navigate = useNavigate();
+
+    // clicking 'Logout' button
     const handlelogoutSubmit = (event) => {
         event.preventDefault();
         navigate('/');
@@ -27,6 +28,7 @@ function HodHome() {
                         <h2>Pending Appraisals:</h2>
                     </div>
                     <div className='hod-table-container'>
+                        {/* displaying table based on forms assigned to employees under the HOD  */}
                         <HodHomeTable HOD_ID={staffID} name={name} />
                     </div>
                 </main>

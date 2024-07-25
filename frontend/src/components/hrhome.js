@@ -8,8 +8,9 @@ function HrHome() {
 	const {state} = useLocation();
 	const {staffID, name} = state;
 	const nameUpper = name.toUpperCase();
-
     const navigate = useNavigate();
+
+    // clicking 'Logout' button
     const handlelogoutSubmit = (event) => {
         event.preventDefault();
         navigate('/');
@@ -27,7 +28,8 @@ function HrHome() {
                         <h2>Pending Appraisals:</h2>
                     </div>
                     <div className='hr-table-container'>
-                    <HrHomeTable HR_ID={staffID} name={name} />
+                        {/* display all forms due this month and the previous month */}
+                        <HrHomeTable HR_ID={staffID} name={name} />
                     </div>
                 </main>
             </div>

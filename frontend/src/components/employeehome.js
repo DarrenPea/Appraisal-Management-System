@@ -8,8 +8,9 @@ function EmployeeHome() {
 	const {state} = useLocation();
 	const {staffID, name} = state;
 	const nameUpper = name.toUpperCase();
-
     const navigate = useNavigate();
+
+    // clicking 'Logout' button
     const handlelogoutSubmit = (event) => {
         event.preventDefault();
         navigate('/');
@@ -27,6 +28,7 @@ function EmployeeHome() {
                         <h2>Pending Appraisals:</h2>
                     </div>
                     <div className='employee-table-container'>
+                        {/* displaying table based on forms assigned to employee  */}
                         <EmployeeHomeTable staffID={staffID} name={name} />
                     </div>
                 </main>

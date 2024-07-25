@@ -84,33 +84,3 @@ td:last-child {
 .fill-up-btn:hover {
     background-color: #f0f0f0;
 }
-
-.form-container {
-    display: none;
-    margin-top: 20px;
-}
-.form-container.active {
-    display: block;
-}
-.form-container form {
-    display: flex;
-    flex-direction: column;
-}
-.form-container form input {
-    margin-bottom: 10px;
-    padding: 8px;
-    font-size: 16px;
-}
-.form-container form button {
-    padding: 10px;
-    font-size: 16px;
-}
-.no-actions {
-    display: none;
-    margin-top: 20px;
-    font-size: 18px;
-    color: green;
-}
-.no-actions.active {
-    display: block;
-}

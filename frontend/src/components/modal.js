@@ -5,22 +5,22 @@ import axios from "axios";
 
 function Modal({ onClose, employeeID, employeeName }) {
 	const modalRef = useRef();
+	const [data, setData] = useState({});
+
+	// close modal
 	const closeModal = (e) => {
 		if(modalRef.current === e.target) {
 			onClose();
 		}
 	};
 
-	const [data, setData] = useState({});
-
 	useEffect(() => {
+		// fetch employee's details like KPI using employeeID
 		const fetchData = async() => {
 			try {
 				const response = await axios.post('http://localhost:3000/employee/details', {employeeID});
 				const responseData = response.data[0];
-				console.log("responsedata", responseData);
 				
-
 				const details = {
 					jobFunction: responseData.jobFunction,
 					KPI: responseData.KPI,
@@ -36,16 +36,14 @@ function Modal({ onClose, employeeID, employeeName }) {
 		fetchData();
 	}, [employeeID]);
 
-
-	// const data = { jobFunction: 'HR', KPI: '100%', disciplinary: '0', attendanceRecords: '100%' };
-
-
 	return (
-		<div ref={modalRef} onClick={closeModal} className="modal">
+		<div ref={modalRef} role='dialog' onClick={closeModal} className="modal">
 			<div className="modal-content">
+				{/* 'X' button to close the modal */}
 				<button className="modal-close-button" onClick={onClose}><X size={20}/></button>
 				<div>
 					<p className="modal-employee-name">{employeeName}</p>
+					{/* table to display employee's details */}
 					<table className='hod-modal-table'>
 						<tbody>
 							<tr>

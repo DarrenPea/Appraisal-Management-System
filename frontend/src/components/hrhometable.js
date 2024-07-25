@@ -4,109 +4,71 @@ import { useNavigate } from 'react-router-dom';
 
 function HrHomeTable( { HR_ID, name } ) {
 	const navigate = useNavigate();
-
-	// UNCOMMENT WHEN API CALL READY
     const [appraisals, setAppraisals] = useState([]);
 
     useEffect(() => {
+		// fetch all forms for HR
+		const fetchAppraisals = async() => {
+			try {
+				const firstResponse = await axios.get('http://localhost:3000/form/HR/status');
+				const appraisalData = firstResponse.data;
+                // ensure data is in an array format
+				const appraisalArray = Array.isArray(appraisalData) ? appraisalData : [appraisalData];
+					
+					if(appraisalArray.length === 0) {
+						setAppraisals([]);
+						return;
+					}
 
-	// STOP HERE
+				const staffPromises = appraisalArray.map(async (item) => {
+					try{
+				        // fetch employee name and department using employeeID
+						const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
+						const { employeeName, department } = secondResponse.data[0];
+						const new_date = new Date(item.dueDate);
+						const due_date = new_date.toISOString().split('T')[0];
 
-		// Simulate an axios request with a timeout (useless)
-		// setTimeout(() => {
-		// 	const sampleData = [
-        //         { employeeID: 'Sarah Lee', hodID: '132894', appraisalType: 'Yearly', dueDate: '11/1/24', statusEmployee: 'Submitted', statusHOD: 'Pending', formID: 'sdfsdg' },
-        //         { employeeID: 'Lebron James', hodID: '213124', appraisalType: 'Confirmation', dueDate: '12/2/24', statusEmployee: 'Submitted', statusHOD: 'Submitted', formID: 'dfgsdf' },
-        //         { employeeID: 'Freddy', hodID: '12314', appraisalType: 'Yearly', dueDate: '13/2/24', statusEmployee: 'Submitted', statusHOD: 'Submitted', formID: 'sdhsfsasf' },
-        //         { employeeID: 'Father Loh', hodID: '213452665', appraisalType: 'Yearly', dueDate: '14/2/24', statusEmployee: 'Pending', statusHOD: 'Pending', formID: 'gfjfhbgcv' }
-        //     ];
-	  
-		// 	const newAppraisals = sampleData.map(item => ({
-		// 	    name: item.employeeID,
-		// 		hodName: item.hodID,
-		// 	    type: item.appraisalType,
-		// 	    dueDate: item.dueDate,
-        //      employeeStatus: item.statusEmployee,
-		// 	    hodStatus: item.statusHOD,
-		// 		formID: item.formID,
-		// 	}));
-	  
-		// 	setAppraisals(newAppraisals);
-		//   }, 1000); // Simulate a 1-second delay
+						return {
+							employeeName,
+							department,
+							type: item.appraisalType,
+							dueDate: due_date,
+							employeeStatus: item.statusEmployee,
+							status: item.statusHOD,
+							hodID: item.hodID,
+							formID: item.formID
+						};
+					} catch (error) {
+						console.error('Error fetching second response', error);
+						return null;
+					}
+				});
+				
+				const newAppraisals = await Promise.all(staffPromises);
+				setAppraisals(newAppraisals);
+			} catch (error) {
+				console.error('Error fetching data', error);
+			}
+		};
 
-
-	// UNCOMMENT WHEN API CALL READY
-	const fetchAppraisals = async() => {
-		try {
-			const firstResponse = await axios.get('http://localhost:3000/form/HR/status');
-			const appraisalData = firstResponse.data;
-
-			const appraisalArray = Array.isArray(appraisalData) ? appraisalData : [appraisalData];
-                console.log("array", appraisalArray);
-                
-                if(appraisalArray.length === 0) {
-                    setAppraisals({formID: null})
-                    return
-                }
-
-			const staffPromises = appraisalArray.map(async (item) => {
-				try{
-					const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
-					const { employeeName, department } = secondResponse.data[0];
-					const new_date = new Date(item.dueDate);
-					const due_date = new_date.toISOString().split('T')[0];
-
-					return {
-						employeeName,
-						department,
-						type: item.appraisalType,
-						dueDate: due_date,
-						employeeStatus: item.statusEmployee,
-						status: item.statusHOD,
-						hodID: item.hodID,
-						formID: item.formID
-					};
-				} catch (error) {
-					console.error('Error fetching second response', error);
-				    return null;
-				}
-			});
-			
-			const newAppraisals = await Promise.all(staffPromises);
-			setAppraisals(newAppraisals);
-		} catch (error) {
-			console.error('Error fetching data', error);
-		}
-	};
-
-	fetchAppraisals();
-
+		fetchAppraisals();
   	}, []);
-	// STOP HERE
 
-	
-	// MOCK DATA
-    // const appraisals = [
-    //     { employeeName: 'Sarah Lee', department: 'manu', type: 'Yearly', dueDate: '11/1/24', employeeStatus: 'Submitted', status: 'Pending', hodID: 'hodododd', formID: '123' },
-    //     { employeeName: 'Lebron James', department: 'manu', type: 'Confirmation', dueDate: '12/2/24', employeeStatus: 'Submitted', status: 'Submitted', hodID: 'hodfwododd', formID: '1212' },
-    //     { employeeName: 'Freddy', department: 'manu', type: 'Yearly', dueDate: '13/2/24', employeeStatus: 'Submitted', status: 'Submitted', hodID: 'wqeadsf', formID: '3454' },
-    //     { employeeName: 'Father Loh', department: 'manu', type: 'Yearly', dueDate: '14/2/24', employeeStatus: 'Pending', status: 'Pending', hodID: 'hoasddodasdodd', formID: '24123' }
-    // ];
-
-
+	// handle 'View' button to view form
 	const handleHrViewClick = (formID, HR_ID, employeeName, department, type) => {
 		navigate('/form', { state: { formID, staffID: HR_ID, role: "hr", employeeName, department, type, staffName: name } });
 	}
 
     return (
 		<>
-		{console.log("len", appraisals.length)}
-		{appraisals.formID === null && (
+		{/* no forms due this month and the previous month */}
+		{appraisals.length === 0 && (
 			<div className='no-actions'>
 				<p>No actions are needed at this time.</p>
 			</div>
 		)}
-		{appraisals.formID !== null && (
+		{/* there are forms due this month and the previous month */}
+		{appraisals.length !== 0 && (
         <table className='hr-table'>
 			<thead>
 				<tr>
@@ -147,6 +109,7 @@ function HrHomeTable( { HR_ID, name } ) {
                             </td>
                         )}
                         <td>
+							{/* HR can always click on 'View' to view current state of form */}
                             <button className={'hr-view-btn'} onClick={() => handleHrViewClick(appraisal.formID, HR_ID, appraisal.employeeName, appraisal.department, appraisal.type)}>
                                 View
                             </button>

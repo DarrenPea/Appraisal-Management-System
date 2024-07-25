@@ -1,34 +1,90 @@
-const express = require('express');
-const path = require('path');
-const indexRouter = require('./routes/index'); // Importing the router
-var cors = require('cors');
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+const bodyParser = require('body-parser');
+var process = require('process');
+const db = require("./models/db");
+const cors = require('cors'); // Import cors
 
-const app = express();
+var employeeModel = require('./models/employee.js');
+var formModel = require('./models/appraisalform.js');
+var hodModel = require('./models/hod.js');
+var hrModel = require('./models/hr.js');
 
+
+// employeeModel.sync();
+// formModel.sync();
+
+process.on('SIGINT', db.cleanup);
+process.on('SIGTERM', db.cleanup);
+
+
+var indexRouter = require('./routes/index.js');
+var formRouter = require('./routes/appraisalform');
+var employeeRouter = require('./routes/employee.js');
+var hrRouter = require('./routes/hr.js');
+var hodRouter = require('./routes/hod.js');
+
+
+var app = express();
+
+//Configure CORS to allow requests from http://localhost:3001
+app.use(cors({origin: 'http://localhost:3001'}));
 const session = require('express-session');
-app.use(cors());
 
-// Set the view engine to EJS
-app.set('view engine', 'ejs');
+
+
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-// Serve static files from the public directory
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Parse URL-encoded bodies for form data
-app.use(express.urlencoded({ extended: true }));
+//Middleware
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json()); // To parse JSON bodies
+
 //establish session to identify whether login done or not
 app.use(session({
 	secret: 'secret',
 	resave: true,
 	saveUninitialized: true
 }));
-
-// Routes
+//direct to login page first
 app.use('/', indexRouter);
+app.use('/form', formRouter);
+app.use('/employee', employeeRouter);
+app.use('/hod', hodRouter);
+app.use('/hr', hrRouter);
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+
+
+// TODO when finalize 
+// app.use('/employee', employeeRouter);
+// app.use('/form', formRouter);
+// app.use('/hr', hrRouter);
+// app.use('/hod', hodRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;

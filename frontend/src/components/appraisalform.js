@@ -8,9 +8,7 @@ function AppraisalForm() {
 	const {formID, staffID, role, employeeName, department, type, staffName, employeeID} = state;
 	const navigate = useNavigate();
 
-	console.log(staffName);
 	const [modalVisible, setModalVisible] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
 	const [details, setDetails] = useState({});
 	
 	const [formData, setFormData] = useState({
@@ -69,6 +67,7 @@ function AppraisalForm() {
 	})
 
 	useEffect(() => {
+		// fetch employee details like KPI based on employee ID
 		const fetchDetails = async() => {
 			try {
 				const responseDetails = await axios.post('http://localhost:3000/employee/details', {employeeID});
@@ -86,6 +85,7 @@ function AppraisalForm() {
 			}
 		}
 
+		// fetch form based on ID
 		const fetchOriginalForm = async() => {
 			try {
 				const originalFormResponse = await axios.post('http://localhost:3000/form/retrieve', { formID });
@@ -104,7 +104,6 @@ function AppraisalForm() {
 				};
 
 				const cleanedForm = replaceNullWithEmptyString(originalFormResponseData);
-				
 
 				const originalForm = {
 					formID,
@@ -173,7 +172,7 @@ function AppraisalForm() {
 
 	}, [formID, employeeID, role]);
 
-
+	// handle changes in form data
 	const handleAppraisalFormChange = (e) => {
         const { name, value } = e.target;
         const updatedFormData = {
@@ -195,90 +194,46 @@ function AppraisalForm() {
         setFormData(updatedFormData);
     };
 
-	// const handleAppraisalSubmit = (e) => {
-    //     e.preventDefault();
-
-    //     if (window.confirm("Are you sure you want to submit the appraisal form?")) {
-    //         setModalVisible(true);
-    //     }
-    // };
-	
+	// handles 'OK' button for HR, lead back to home
 	const handleAppraisalOK = (e) => {
 		e.preventDefault();
 		navigate('/hr', {state: {staffID, name: staffName}});
 	}
 
+	// handles 'Submit' button for employee and HOD + post form data
 	const handleAppraisalSubmit = (e) => {
 		e.preventDefault();
 
-		// call axios here to post answers
-
-
 		if (window.confirm("Are you sure you want to submit the appraisal form?")) {
-            setModalVisible(true);
+			if(role === 'employee') {
+				axios.post('http://localhost:3000/form/employee/submit', formData)
+				.then(setModalVisible(true));
+			}
+			if(role === 'hod') {
+				axios.post('http://localhost:3000/form/hod/submit', formData)
+				.then(setModalVisible(true));
+			}
         }
 	}
 
-
+	// handles 'OK' button for employee and HOD, lead back to home
 	const handleConfirm = () => {
         setModalVisible(false);
-        setIsSubmitted(true);
-
-
-		// checking
-		console.log("TESTING");
-		console.log(formData);
 
 		if(role === 'employee') {
-			axios.post('http://localhost:3000/form/employee/submit', formData)
-			.then(response => {
-				console.log("Form submitted successfully:", response);
-				navigate('/employee', {state: {staffID, name: staffName}});
-			});
+			navigate('/employee', {state: {staffID, name: staffName}});
 		}
 		if(role === 'hod') {
-			axios.post('http://localhost:3000/form/HOD/submit', formData)
-			.then(response => {
-				console.log("Form submitted successfully:", response);
-				navigate('/hod', {state: {staffID, name: staffName}});
-			});
+			navigate('/hod', {state: {staffID, name: staffName}});
 		}
-
-
-
-        // call axios here to post answers
-		
-        // axios.post('/api/submitForm', formData)
-        //     .then(response => {
-        //         console.log("Form submitted successfully:", response);
-
-        //         // Reset form data
-        //         setFormData({
-        //             formID: formID || '',
-        //             a1: "",
-        //             a2_1: "",
-        //             a2_2: "",
-        //             a2_3: "",
-        //             a2_4: "",
-        //             a2_5: "",
-        //             a2_6: "",
-        //             a2_7: "",
-        //             a2_8: ""
-        //         });
-
-        //         // Redirect to EmployeeHome with state indicating update
-        //         navigate('/employee', { state: { updated: true, formID: formData.formID } });
-        //     })
-        //     .catch(error => {
-        //         console.error("Error submitting form:", error);
-        //     });
     };
 
+	// closes 'Form Submitted' modal
 	const handleCloseModal = () => {
         setModalVisible(false);
     };
 
-
+	// questions for A2 section
 	const a2Labels = [
 		"A2.1 Elaborate if the past year been good/bad/satisfactory for you:",
 		"A2.2 What do you consider to be your most important achievements of the past months/years:",
@@ -290,6 +245,7 @@ function AppraisalForm() {
 		"A2.8 List the objectives you set out to achieve in the past 12 months (or the period covered by this appraisal) with the measures or standards agreed - against each comment on achievement or otherwise, with reasons where appropriate. Score the performance against each objective as per below Section A3 rating:"
 	]
 
+	// aspects to be rated for A3 section
 	const ratingLabels = [
 		"Corporate Responsibility & Ethics",
 		"Job/Technical Knowledge",
@@ -316,6 +272,7 @@ function AppraisalForm() {
 	return (
 		<div className="appraisal-body">
 			<div className="appraisal-form-page">
+
 				<header>
 					<h1>Appraisal Form ID: {formData.formID}</h1>
 				</header>
@@ -338,6 +295,12 @@ function AppraisalForm() {
 				<div className="appraisal-employee-details">
 					<h2>Employee Details</h2>
 					<h3>Employee Name: {employeeName}</h3>
+					<div className="appraisal-employee-finer">
+						<h4>Department: {department}</h4>
+						<h4>Purpose: {type}</h4>
+					</div>
+					
+					{/* display employee's details */}
 					<table className="appraisal-employee-details-table">
 						<thead>
 							<tr>
@@ -358,17 +321,24 @@ function AppraisalForm() {
 					</table>
 				</div>
 				)}
+
+
 				<main>
 					<div className="appraisal-form-container">
+						{/* creating a form */}
 						<form className="appraisal-form" id="appraisal-form" onSubmit={handleAppraisalSubmit}>
 
+							{/* A1 section */}
 							<h3>A1 Role & Responsibilities</h3>
+
+							{/* employee to fill up A1 */}
 							{role === 'employee' && (
 								<>
 								<label htmlFor="A1">A1 Elaborate your understanding of your primary role and responsibilities:</label>
 								<textarea id="A1" name="A1" rows="5" value={formData.A1} onChange={handleAppraisalFormChange} required></textarea>
 								</>
 							)}
+							{/* HOD and HR to view employee's response */}
 							{(role === 'hod' || role === 'hr') && (
 								<>
 								<label htmlFor="A1">A1 Elaborate your understanding of your primary role and responsibilities:</label>
@@ -376,7 +346,9 @@ function AppraisalForm() {
 								</>
 							)}
 
+							{/* A2 section */}
 							<h3>A2 Discussion</h3>
+							{/* employee to fill up A2 */}
 							{role === 'employee' && (
 								<>
 								{['A2_1', 'A2_2', 'A2_3', 'A2_4', 'A2_5', 'A2_6', 'A2_7', 'A2_8'].map((field, index) => (
@@ -387,6 +359,7 @@ function AppraisalForm() {
 								))}
 								</>
 							)}
+							{/* HOD and HR to view employee's response */}
 							{(role === 'hod' || role === 'hr') && (
 								<>
 								{['A2_1', 'A2_2', 'A2_3', 'A2_4', 'A2_5', 'A2_6', 'A2_7', 'A2_8'].map((field, index) => (
@@ -398,17 +371,17 @@ function AppraisalForm() {
 								</>
 							)}
 
-
+							{/* A3 section */}
 							<h3>A3 Evaluating your own capability:</h3>
 							<h4>Score your own capability or knowledge in the following areas in terms of your current function requirements. If appropriate provide evidence to the appraisal to support your assessment</h4>
 							<h5>1 = Poor | 2 = Fair | 3 = Satisfactory | 4 = Good | 5 = Excellent</h5>
 
 							<div className="rating-section">
+								{/* employee to rate themselves on various aspects from a scale of 1 to 5 */}
 								{role === 'employee' && (
 									<>
 									{Array.from({ length: ratingLabels.length }, (_, index) => {
 										const field = `A3_${index + 1}`;
-										
 										return (
 											<div key={index} className="rating-row">
 												<label className="rating-label">{ratingLabels[index]}</label>
@@ -425,6 +398,7 @@ function AppraisalForm() {
 									})}
 									</>
 								)}
+								{/* HOD to view employee's response and can choose to leave comments on the individual aspects */}
 								{(role === 'hod') && (
 									<>
 									{Array.from({ length: ratingLabels.length }, (_, index) => {
@@ -441,6 +415,7 @@ function AppraisalForm() {
 									})}
 									</>
 								)}
+								{/* HR to view employee's response and HOD's comments on the individual aspects */}
 								{(role === 'hr') && (
 									<>
 									{Array.from({ length: ratingLabels.length }, (_, index) => {
@@ -457,6 +432,8 @@ function AppraisalForm() {
 									})}
 									</>
 								)}
+
+								{/* display the cumulative overall score for A3 section */}
 								{role === 'employee' && (
 								<div className="overall-score">
 									<label htmlFor="overallRating">Overall Rating:</label>
@@ -469,11 +446,11 @@ function AppraisalForm() {
 									<p className="overallRating">{formData.overallRating === null ? 0 : `${formData.overallRating} / 5`}</p>
 								</div>
 								)}
-
-								
 							</div>
 
-							
+
+							{/* evaluation section, not available to employee */}
+							{/* HOD can evaluate the employee */}
 							{(role === 'hod') && (
 								<>
 								<h3>Evaluation</h3>
@@ -481,16 +458,17 @@ function AppraisalForm() {
 								<textarea id='B' name='B' rows="5" value={formData.B} onChange={handleAppraisalFormChange} required></textarea>
 								</>
 							)}
-
+							{/* HR can view the evaluation left by HOD */}
 							{role === 'hr' && (
 								<>
 								<h3>Evaluation</h3>
 								<label htmlFor="b">Describe the purpose of the appraiser's job function. Review and discuss self-appraisal entries; appraiser's career direction options and wishes. Aprpaiser may like to discuss on specific objectives that will enable the appraisee to reach competence and to meet required performance in cuurent job, or achieve readiness for, the next job level/type, or if no particular next role is identified or sought, to achieve the desired personal growth or experience. These objectives must adhere to the SMARTER rules - specific, measurable, agreed, realistic, time-bound, ethical, recorded. Training and development support maybe discuss to help the appraisee to meet the agreed objectives above. Other issues maybe covered (if any).</label>
 								<p className='hod-section-b' id='b' name='b'>{formData.B}</p>
-								
+								{/* 'OK' button to close the form */}
 								<button className="hr-ok-btn" onClick={handleAppraisalOK}>OK</button>
 								</>
 							)}
+							{/* employee and HOD to submit their forms */}
 							{(role === 'employee' || role === 'hod') && (
 								<button className='appraisal-form-submit-btn' type="submit">Submit</button>
 							)}						
@@ -499,11 +477,13 @@ function AppraisalForm() {
 				</main>
 			</div>
 
+			{/* modal that shows employee/HOD that they submitted the form */}
 			{modalVisible && (
                 <div className="modal-confirm-form">
                     <div className="modal-confirm-form-content">
                         <span className="close-confirm-form" onClick={handleCloseModal}>&times;</span>
 							<>
+							<h2>Form Submitted</h2>
 							<h2>Details</h2>
 							{role === 'employee' && (
 								<p>Name: {employeeName}</p>
@@ -514,6 +494,7 @@ function AppraisalForm() {
 							<p>Department: {department}</p>
 							<p>Purpose: {type}</p>
 							</>
+						{/* 'OK' button to close the form */}
                         <button className="close-confirm-form-btn" onClick={handleConfirm}>OK</button>
                     </div>
                 </div>
