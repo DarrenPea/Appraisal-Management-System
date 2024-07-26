@@ -6,7 +6,7 @@ let pool = mysql
     host: "localhost",
     user: "root", // write username here
     database: "esc_proj",
-    password: "Pea@221201", // write password here
+    password: "", // write password here
     connectionLimit: 10,
   }).promise();
 
