@@ -29,7 +29,7 @@ describe('EmployeeHome Component', () => {
     expect(screen.getByText(/WELCOME, JOHN DOE \[EMPLOYEE\]/i)).toBeInTheDocument();
 
     // Check if the pending appraisals header is displayed
-    expect(screen.getByText(/Pending Appraisals:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pending Appraisals/i)).toBeInTheDocument();
 
     // Check if the mocked EmployeeHomeTable is rendered
     expect(screen.getByText(/Mocked EmployeeHomeTable/i)).toBeInTheDocument();

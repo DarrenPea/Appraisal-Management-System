@@ -25,7 +25,7 @@ function HodHome() {
                 </div>
                 <main>
                     <div className="hod-appraisal-header">
-                        <h2>Pending Appraisals:</h2>
+                        <h2>Pending Appraisals</h2>
                     </div>
                     <div className='hod-table-container'>
                         {/* displaying table based on forms assigned to employees under the HOD  */}

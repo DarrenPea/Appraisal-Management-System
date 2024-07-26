@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function HrHomeTable( { HR_ID, name } ) {
 	const navigate = useNavigate();
     const [appraisals, setAppraisals] = useState([]);
+	const today = new Date();
 
     useEffect(() => {
 		// fetch all forms for HR
@@ -82,40 +83,46 @@ function HrHomeTable( { HR_ID, name } ) {
 				</tr>
 			</thead>
 			<tbody>
-				{appraisals.map((appraisal, index) => (
-					<tr key={index}>
-						<td>{appraisal.employeeName}</td>
-						<td>{appraisal.department}</td>
-						<td>{appraisal.type}</td>
-						<td>{appraisal.dueDate}</td>
-						{appraisal.employeeStatus === 0 && (
-                            <td className='hr-employee-status-pending'>
-                                Pending
-                            </td>
-                        )}
-                        {appraisal.employeeStatus === 1 && (
-                            <td className='hr-employee-status-submitted'>
-                                Submitted
-                            </td>
-                        )}
-						{appraisal.status === 0 && (
-                            <td className='hr-hod-status-pending'>
-                                Pending
-                            </td>
-                        )}
-                        {appraisal.status === 1 && (
-                            <td className='hr-hod-status-submitted'>
-                                Submitted
-                            </td>
-                        )}
-                        <td>
-							{/* HR can always click on 'View' to view current state of form */}
-                            <button className={'hr-view-btn'} onClick={() => handleHrViewClick(appraisal.formID, HR_ID, appraisal.employeeName, appraisal.department, appraisal.type)}>
-                                View
-                            </button>
-                        </td>
-					</tr>
-				))}
+				{appraisals
+					.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+					.map((appraisal, index) => {
+						const isOverdue = new Date(appraisal.dueDate) < today;
+						return (
+							<tr key={index} className={`hr-table-row ${(isOverdue && (appraisal.status === 0)) ? 'overdue' : ''}`}>
+								<td>{appraisal.employeeName}</td>
+								<td>{appraisal.department}</td>
+								<td>{appraisal.type}</td>
+								<td>{appraisal.dueDate}</td>
+								{appraisal.employeeStatus === 0 && (
+									<td className='hr-employee-status-pending'>
+										Pending
+									</td>
+								)}
+								{appraisal.employeeStatus === 1 && (
+									<td className='hr-employee-status-submitted'>
+										Submitted
+									</td>
+								)}
+								{appraisal.status === 0 && (
+									<td className='hr-hod-status-pending'>
+										Pending
+									</td>
+								)}
+								{appraisal.status === 1 && (
+									<td className='hr-hod-status-submitted'>
+										Submitted
+									</td>
+								)}
+								<td>
+									{/* HR can always click on 'View' to view current state of form */}
+									<button className={'hr-view-btn'} onClick={() => handleHrViewClick(appraisal.formID, HR_ID, appraisal.employeeName, appraisal.department, appraisal.type)}>
+										View
+									</button>
+								</td>
+							</tr>
+						);
+					})
+				}
 			</tbody>
 		</table>
 		)}

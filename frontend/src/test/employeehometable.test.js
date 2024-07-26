@@ -64,6 +64,99 @@ describe('EmployeeHomeTable', () => {
     });
   });
 
+  test('renders past due appraisals with red background', async () => {
+    const pastDueDate = new Date();
+    pastDueDate.setDate(pastDueDate.getDate() - 1); // Yesterday's date
+    const pastDueDateString = pastDueDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    const mockAppraisalData = [{
+      appraisalType: 'Annual',
+      dueDate: pastDueDateString,
+      statusEmployee: 0,
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'John Doe',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
+    render(
+      <MemoryRouter>
+        <EmployeeHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const tableRow = screen.getByRole('row', { name: /John Doe IT Annual/i });
+      expect(tableRow).toHaveClass('overdue');
+    });
+  });
+
+  test('renders non-past due appraisals without red background', async () => {
+    const futureDueDate = new Date();
+    futureDueDate.setDate(futureDueDate.getDate() + 1); // Tomorrow's date
+    const futureDueDateString = futureDueDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    const mockAppraisalData = [{
+      appraisalType: 'Annual',
+      dueDate: futureDueDateString,
+      statusEmployee: 0,
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'John Doe',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
+    render(
+      <MemoryRouter>
+        <EmployeeHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const tableRow = screen.getByRole('row', { name: /John Doe IT Annual/i });
+      expect(tableRow).not.toHaveClass('overdue');
+    });
+  });
+
+  test('does not apply red background to overdue but submitted appraisals', async () => {
+    const pastDueDate = new Date();
+    pastDueDate.setDate(pastDueDate.getDate() - 1); // Yesterday's date
+    const pastDueDateString = pastDueDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    const mockAppraisalData = [{
+      appraisalType: 'Annual',
+      dueDate: pastDueDateString,
+      statusEmployee: 1, // Submitted
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'John Doe',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
+    render(
+      <MemoryRouter>
+        <EmployeeHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const tableRow = screen.getByRole('row', { name: /John Doe IT Annual/i });
+      expect(tableRow).not.toHaveClass('overdue');
+    });
+  });
+
   test('Fill up button is enabled for pending appraisals', async () => {
     const mockAppraisalData = [{
       appraisalType: 'Annual',

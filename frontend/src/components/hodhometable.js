@@ -9,6 +9,7 @@ function HodHomeTable( { HOD_ID, name}) {
     const [currentEmployeeName, setCurrentEmployeeName] = useState(null);
     const [appraisals, setAppraisals] = useState([]);
     const navigate = useNavigate();
+    const today = new Date();
 
     useEffect(() => {
         // fetch forms for HOD using hodID
@@ -94,53 +95,59 @@ function HodHomeTable( { HOD_ID, name}) {
                 </tr>
             </thead>
             <tbody>
-                {appraisals.map((appraisal, index) => (
-                    <tr key={index}>
-                        <td>{appraisal.employeeName}</td>
-                        <td>{appraisal.department}</td>
-                        <td>{appraisal.type}</td>
-                        <td>{appraisal.dueDate}</td>
-                        {appraisal.employeeStatus === 0 && (
-                            <td className='hod-employee-status-pending'>
-                                Pending
-                            </td>
-                        )}
-                        {appraisal.employeeStatus === 1 && (
-                            <td className='hod-employee-status-submitted'>
-                                Submitted
-                            </td>
-                        )}
-                        {appraisal.status === 0 && (
-                            <td className='hod-status-pending'>
-                                Pending
-                            </td>
-                        )}
-                        {appraisal.status === 1 && (
-                            <td className='hod-status-submitted'>
-                                Submitted
-                            </td>
-                        )}
-                        <td className='hod-view'>
-                            {/* HOD can click on 'View' to view employee's details */}
-                            <button
-                                className='hod-view-btn'
-                                onClick={() => handleViewClick(appraisal.employeeID, appraisal.employeeName)}
-                            >
-                                View
-                            </button>
-                        </td>
-                        <td>
-							{/* HOD can click on 'Fill up' if they have a 'Pending' form and the employee has already submitted. Else, disable 'Fill up' */}
-                            <button
-                                className={`hod-fill-up-btn ${(appraisal.status === 1 || appraisal.employeeStatus === 0) ? 'disabled' : ''}`}
-                                disabled={appraisal.status === 1 || appraisal.employeeStatus === 0}
-                                onClick={() => handleHodFillUpClick(appraisal.formID, HOD_ID, appraisal.employeeName, appraisal.department, appraisal.type, appraisal.employeeID)}
-                            >
-                                Fill up
-                            </button>
-                        </td>
-                    </tr>
-                ))}
+                {appraisals
+                    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                    .map((appraisal, index) => {
+                        const isOverdue = new Date(appraisal.dueDate) < today;
+                        return (
+                            <tr key={index} className={`hod-table-row ${(isOverdue && (appraisal.status === 0)) ? 'overdue' : ''}`}>
+                                <td>{appraisal.employeeName}</td>
+                                <td>{appraisal.department}</td>
+                                <td>{appraisal.type}</td>
+                                <td>{appraisal.dueDate}</td>
+                                {appraisal.employeeStatus === 0 && (
+                                    <td className='hod-employee-status-pending'>
+                                        Pending
+                                    </td>
+                                )}
+                                {appraisal.employeeStatus === 1 && (
+                                    <td className='hod-employee-status-submitted'>
+                                        Submitted
+                                    </td>
+                                )}
+                                {appraisal.status === 0 && (
+                                    <td className='hod-status-pending'>
+                                        Pending
+                                    </td>
+                                )}
+                                {appraisal.status === 1 && (
+                                    <td className='hod-status-submitted'>
+                                        Submitted
+                                    </td>
+                                )}
+                                <td className='hod-view'>
+                                    {/* HOD can click on 'View' to view employee's details */}
+                                    <button
+                                        className='hod-view-btn'
+                                        onClick={() => handleViewClick(appraisal.employeeID, appraisal.employeeName)}
+                                    >
+                                        View
+                                    </button>
+                                </td>
+                                <td>
+                                    {/* HOD can click on 'Fill up' if they have a 'Pending' form and the employee has already submitted. Else, disable 'Fill up' */}
+                                    <button
+                                        className={`hod-fill-up-btn ${(appraisal.status === 1 || appraisal.employeeStatus === 0) ? 'disabled' : ''}`}
+                                        disabled={appraisal.status === 1 || appraisal.employeeStatus === 0}
+                                        onClick={() => handleHodFillUpClick(appraisal.formID, HOD_ID, appraisal.employeeName, appraisal.department, appraisal.type, appraisal.employeeID)}
+                                    >
+                                        Fill up
+                                    </button>
+                                </td>
+                            </tr>
+                        );
+                    })
+                }
             </tbody>
         </table>
         )}

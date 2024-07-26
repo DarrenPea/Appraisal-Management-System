@@ -32,7 +32,7 @@ describe('HodHome Component', () => {
     expect(screen.getByText(/WELCOME, JOHN DOE \[HOD\]/i)).toBeInTheDocument();
 
     // Check if the pending appraisals header is displayed
-    expect(screen.getByText(/Pending Appraisals:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pending Appraisals/i)).toBeInTheDocument();
 
     // Check if the mocked HodHomeTable is rendered
     expect(screen.getByText(/HodHomeTable Component/i)).toBeInTheDocument();

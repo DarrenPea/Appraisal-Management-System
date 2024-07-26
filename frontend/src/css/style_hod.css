@@ -54,9 +54,9 @@ h1 {
 }
 
 .hod-appraisal-header h2 {
-    background-color: #f8d7da;
     padding: 15px;
     border-radius: 5px;
+    border: 1.5px solid black;
 }
 
 .no-actions {
@@ -85,6 +85,14 @@ main {
     display: table;
     width: 100%;
     border-collapse: collapse;
+}
+
+.hod-table-row {
+    background-color: none;
+}
+
+.hod-table-row.overdue {
+    background-color: rgba(255, 136, 136, 0.356);
 }
 
 th, td {

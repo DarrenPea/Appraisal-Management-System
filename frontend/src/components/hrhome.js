@@ -25,7 +25,7 @@ function HrHome() {
                 </div>
                 <main>
                     <div className="hr-appraisal-header">
-                        <h2>Pending Appraisals:</h2>
+                        <h2>Pending Appraisals</h2>
                     </div>
                     <div className='hr-table-container'>
                         {/* display all forms due this month and the previous month */}

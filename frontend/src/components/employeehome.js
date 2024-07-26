@@ -25,7 +25,7 @@ function EmployeeHome() {
                 </div>
                 <main>
                     <div className="employee-appraisal-header">
-                        <h2>Pending Appraisals:</h2>
+                        <h2>Pending Appraisals</h2>
                     </div>
                     <div className='employee-table-container'>
                         {/* displaying table based on forms assigned to employee  */}

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function EmployeeHomeTable({staffID, name}) {
 	const [appraisals, setAppraisals] = useState([]);
 	const navigate = useNavigate();
+	const today = new Date();
 
 	useEffect(() => {
 		// fetch form for employee using employeeID
@@ -79,34 +80,40 @@ function EmployeeHomeTable({staffID, name}) {
                 </tr>
             </thead>
             <tbody>
-                {appraisals.map((appraisal, index) => (
-                    <tr key={index}>
-                        <td>{appraisal.employeeName}</td>
-						<td>{appraisal.department}</td>
-                        <td>{appraisal.type}</td>
-                        <td>{appraisal.dueDate}</td>
-						{appraisal.employeeStatus === 0 && (
-							<td className='employee-status-pending'>
-								Pending
-							</td>
-						)}
-						{appraisal.employeeStatus === 1 && (
-							<td className='employee-status-submitted'>
-								Submitted
-							</td>
-						)}
-                        <td>
-							{/* employees can click on 'Fill up' if they have a 'Pending' form. If submitted, disable 'Fill up' */}
-                            <button
-                                className={`employee-fill-up-btn ${appraisal.employeeStatus === 1 ? 'disabled' : ''}`}
-                                disabled={appraisal.employeeStatus === 1}
-								onClick={() => handleEmployeeFillUpClick(appraisal.formID, staffID, appraisal.employeeName, appraisal.department, appraisal.type )}
-                            >
-                                Fill up
-                            </button>
-                        </td>
-                    </tr>
-                ))}
+                {appraisals
+					.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+					.map((appraisal, index) => {
+						const isOverdue = new Date(appraisal.dueDate) < today;
+						return(
+							<tr key={index} className={`employee-table-row ${(isOverdue && (appraisal.employeeStatus === 0)) ? 'overdue' : ''}`}>
+								<td>{appraisal.employeeName}</td>
+								<td>{appraisal.department}</td>
+								<td>{appraisal.type}</td>
+								<td>{appraisal.dueDate}</td>
+								{appraisal.employeeStatus === 0 && (
+									<td className='employee-status-pending'>
+										Pending
+									</td>
+								)}
+								{appraisal.employeeStatus === 1 && (
+									<td className='employee-status-submitted'>
+										Submitted
+									</td>
+								)}
+								<td>
+									{/* employees can click on 'Fill up' if they have a 'Pending' form. If submitted, disable 'Fill up' */}
+									<button
+										className={`employee-fill-up-btn ${appraisal.employeeStatus === 1 ? 'disabled' : ''}`}
+										disabled={appraisal.employeeStatus === 1}
+										onClick={() => handleEmployeeFillUpClick(appraisal.formID, staffID, appraisal.employeeName, appraisal.department, appraisal.type )}
+									>
+										Fill up
+									</button>
+								</td>
+							</tr>
+						);
+					}
+                )}
             </tbody>
         </table>
 		)}

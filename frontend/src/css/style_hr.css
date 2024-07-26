@@ -54,9 +54,9 @@ h1 {
 }
 
 .hr-appraisal-header h2 {
-    background-color: #f8d7da;
     padding: 15px;
     border-radius: 5px;
+    border: 1.5px solid black;
 }
 
 main {
@@ -75,6 +75,13 @@ main {
     display: table;
     width: 100%;
     border-collapse: collapse;
+}
+
+.hr-table-row {
+    background-color: none;
+}
+.hr-table-row.overdue {
+    background-color: rgba(255, 136, 136, 0.356);
 }
 
 th, td {

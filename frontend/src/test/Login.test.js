@@ -3,12 +3,19 @@ import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/re
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 import Login from '../components/Login';
+import { toast } from 'react-toastify';
 
 // Mock the modules
 jest.mock('axios');
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
+}));
+jest.mock('react-toastify', () => ({
+  toast: {
+    error: jest.fn(),
+    success: jest.fn(),
+  },
 }));
 
 describe('Login Component', () => {
@@ -46,33 +53,55 @@ describe('Login Component', () => {
   test('handles non-existent username', async () => {
     axios.post.mockResolvedValue({ data: [1] });
     
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const usernameInput = screen.getByLabelText('Username');
+    const passwordInput = screen.getByLabelText('Password');
+    const loginButton = screen.getByRole('button', { name: 'Log in' });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    fireEvent.change(usernameInput, { target: { value: 'nonexistent' } });
+    fireEvent.change(passwordInput, { target: { value: 'anypassword' } });
+    fireEvent.click(loginButton);
 
     await waitFor(() => {
-      expect(alertMock).toHaveBeenCalledWith('Wrong username!');
+      expect(toast.error).toHaveBeenCalledWith("Wrong username!", expect.objectContaining({
+        position: 'bottom-right',
+        pauseOnFocusLoss: false,
+        pauseOnHover: false,
+        autoClose: 2500,
+        closeOnClick: true,
+        closeButton: true,
+        draggable: false,
+        progress: undefined,
+      }));
     });
-
-    alertMock.mockRestore();
   });
 
   test('handles wrong password', async () => {
     axios.post.mockResolvedValue({ data: [2] });
     
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const usernameInput = screen.getByLabelText('Username');
+    const passwordInput = screen.getByLabelText('Password');
+    const loginButton = screen.getByRole('button', { name: 'Log in' });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    fireEvent.change(usernameInput, { target: { value: 'existinguser' } });
+    fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } });
+    fireEvent.click(loginButton);
 
     await waitFor(() => {
-      expect(alertMock).toHaveBeenCalledWith('Wrong password!');
+      expect(toast.error).toHaveBeenCalledWith("Wrong password!", expect.objectContaining({
+        position: 'bottom-right',
+        pauseOnFocusLoss: false,
+        pauseOnHover: false,
+        autoClose: 2500,
+        closeOnClick: true,
+        closeButton: true,
+        draggable: false,
+        progress: undefined,
+      }));
     });
-
-    alertMock.mockRestore();
   });
 
   test('navigates to HR page on successful HR login', async () => {
-	const mockNavigate = jest.fn();
+    const mockNavigate = jest.fn();
     jest.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(mockNavigate);
 
     axios.post.mockResolvedValue({ data: [{ role: 'HR', hrName: 'Test HR' }] });
@@ -93,6 +122,16 @@ describe('Login Component', () => {
     });
 
     await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith("Login successful!", expect.objectContaining({
+        position: 'bottom-right',
+        pauseOnFocusLoss: false,
+        pauseOnHover: false,
+        autoClose: 2500,
+        closeOnClick: true,
+        closeButton: true,
+        draggable: false,
+        progress: undefined,
+      }));
       expect(mockNavigate).toHaveBeenCalledWith('/hr', expect.objectContaining({
         state: expect.objectContaining({
           staffID: 'hruser',
@@ -100,11 +139,10 @@ describe('Login Component', () => {
         })
       }));
     });
-
   });
 
   test('navigates to Employee page on successful Employee login', async () => {
-	const mockNavigate = jest.fn();
+    const mockNavigate = jest.fn();
     jest.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(mockNavigate);
 
     axios.post.mockResolvedValue({ data: [{ role: 'Employee', employeeName: 'Test Employee' }] });
@@ -125,6 +163,16 @@ describe('Login Component', () => {
     });
 
     await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith("Login successful!", expect.objectContaining({
+        position: 'bottom-right',
+        pauseOnFocusLoss: false,
+        pauseOnHover: false,
+        autoClose: 2500,
+        closeOnClick: true,
+        closeButton: true,
+        draggable: false,
+        progress: undefined,
+      }));
       expect(mockNavigate).toHaveBeenCalledWith('/employee', expect.objectContaining({
         state: expect.objectContaining({
           staffID: 'employee',
@@ -132,7 +180,6 @@ describe('Login Component', () => {
         })
       }));
     });
-
   });
 
   test('navigates to HOD page on successful HOD login', async () => {
@@ -157,6 +204,16 @@ describe('Login Component', () => {
     });
 
     await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith("Login successful!", expect.objectContaining({
+        position: 'bottom-right',
+        pauseOnFocusLoss: false,
+        pauseOnHover: false,
+        autoClose: 2500,
+        closeOnClick: true,
+        closeButton: true,
+        draggable: false,
+        progress: undefined,
+      }));
       expect(mockNavigate).toHaveBeenCalledWith('/hod', expect.objectContaining({
         state: expect.objectContaining({
           staffID: 'hoduser',

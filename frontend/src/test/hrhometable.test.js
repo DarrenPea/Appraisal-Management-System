@@ -75,6 +75,35 @@ describe('HrHomeTable', () => {
     });
   });
 
+  test('renders table with multiple appraisals', async () => {
+    const mockAppraisalData = [
+      { employeeID: 'emp123', appraisalType: 'Annual', dueDate: '2023-12-31', statusEmployee: 0, statusHOD: 0, formID: 'form123' },
+      { employeeID: 'emp456', appraisalType: 'Mid-Year', dueDate: '2023-06-30', statusEmployee: 1, statusHOD: 0, formID: 'form456' }
+    ];
+
+    axios.get.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: [{ employeeName: 'Jane Smith', department: 'IT' }] })
+             .mockResolvedValueOnce({ data: [{ employeeName: 'John Doe', department: 'HR' }] });
+
+    render(
+      <MemoryRouter>
+        <HrHomeTable HR_ID="123" name="Test HR" />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('IT')).toBeInTheDocument();
+      expect(screen.getByText('HR')).toBeInTheDocument();
+      expect(screen.getByText('Annual')).toBeInTheDocument();
+      expect(screen.getByText('Mid-Year')).toBeInTheDocument();
+    });
+
+    const rows = screen.getAllByRole('row');
+    expect(rows).toHaveLength(3); // Header row + 2 data rows
+  });
+
   test('navigates to form page on view button click', async () => {
     const mockNavigate = jest.fn();
     useNavigate.mockReturnValue(mockNavigate);
@@ -105,6 +134,77 @@ describe('HrHomeTable', () => {
           staffName: 'John Doe'
         }
       });
+    });
+  });
+
+  test('renders overdue forms with red background', async () => {
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 1);
+    const pastDateString = pastDate.toISOString().split('T')[0];
+
+    const mockAppraisalData = [
+      { employeeID: 'emp123', appraisalType: 'Annual', dueDate: pastDateString, statusEmployee: 0, statusHOD: 0, formID: 'form123' }
+    ];
+
+    axios.get.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: [{ employeeName: 'Jane Smith', department: 'IT' }] });
+
+    render(
+      <MemoryRouter>
+        <HrHomeTable HR_ID="123" name="Test HR" />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const row = screen.getByRole('row', { name: /Jane Smith IT Annual/i });
+      expect(row).toHaveClass('overdue');
+    });
+  });
+
+  test('does not apply red background to overdue but completed appraisals', async () => {
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 1);
+    const pastDateString = pastDate.toISOString().split('T')[0];
+
+    const mockAppraisalData = [
+      { employeeID: 'emp123', appraisalType: 'Annual', dueDate: pastDateString, statusEmployee: 1, statusHOD: 1, formID: 'form123' }
+    ];
+
+    axios.get.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: [{ employeeName: 'Jane Smith', department: 'IT' }] });
+
+    render(
+      <MemoryRouter>
+        <HrHomeTable HR_ID="123" name="Test HR" />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const row = screen.getByRole('row', { name: /Jane Smith IT Annual/i });
+      expect(row).not.toHaveClass('overdue');
+    });
+  });
+
+  test('sorts appraisals by due date', async () => {
+    const mockAppraisalData = [
+      { employeeID: 'emp123', appraisalType: 'Annual', dueDate: '2023-12-31', statusEmployee: 0, statusHOD: 0, formID: 'form123' },
+      { employeeID: 'emp456', appraisalType: 'Mid-Year', dueDate: '2023-06-30', statusEmployee: 0, statusHOD: 0, formID: 'form456' }
+    ];
+
+    axios.get.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: [{ employeeName: 'Jane Smith', department: 'IT' }] })
+             .mockResolvedValueOnce({ data: [{ employeeName: 'John Doe', department: 'HR' }] });
+
+    render(
+      <MemoryRouter>
+        <HrHomeTable HR_ID="123" name="Test HR" />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const rows = screen.getAllByRole('row');
+      expect(rows[1]).toHaveTextContent('John Doe'); // Earlier due date should be first
+      expect(rows[2]).toHaveTextContent('Jane Smith');
     });
   });
 

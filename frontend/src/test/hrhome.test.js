@@ -59,6 +59,6 @@ describe('HrHome Component', () => {
     );
 
     // Ensure HrHomeTable is rendered with the correct props
-    expect(screen.getByText('Pending Appraisals:')).toBeInTheDocument();
+    expect(screen.getByText('Pending Appraisals')).toBeInTheDocument();
   });
 });
