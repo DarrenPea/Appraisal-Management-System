@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import '../css/style_appraisalform.css'
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function AppraisalForm() {
 	const {state} = useLocation();
@@ -214,6 +216,16 @@ function AppraisalForm() {
 				.then(setModalVisible(true));
 			}
         }
+		toast.success("Form submitted!", {
+			position: 'bottom-right',
+			pauseOnFocusLoss: false,
+			pauseOnHover: false,
+			autoClose: 3000,
+			closeOnClick: true,
+			closeButton: true,
+			draggable: false,
+			progress: undefined,
+		});
 	}
 
 	// handles 'OK' button for employee and HOD, lead back to home
@@ -373,7 +385,7 @@ function AppraisalForm() {
 
 							{/* A3 section */}
 							<h3>A3 Evaluating your own capability:</h3>
-							<h4>Score your own capability or knowledge in the following areas in terms of your current function requirements. If appropriate provide evidence to the appraisal to support your assessment</h4>
+							<h4>Score your own capability or knowledge in the following areas in terms of your current function requirements. If appropriate provide evidence to the appraisal to support your assessment.</h4>
 							<h5>1 = Poor | 2 = Fair | 3 = Satisfactory | 4 = Good | 5 = Excellent</h5>
 
 							<div className="rating-section">
@@ -462,7 +474,7 @@ function AppraisalForm() {
 							{role === 'hr' && (
 								<>
 								<h3>Evaluation</h3>
-								<label htmlFor="b">Describe the purpose of the appraiser's job function. Review and discuss self-appraisal entries; appraiser's career direction options and wishes. Aprpaiser may like to discuss on specific objectives that will enable the appraisee to reach competence and to meet required performance in cuurent job, or achieve readiness for, the next job level/type, or if no particular next role is identified or sought, to achieve the desired personal growth or experience. These objectives must adhere to the SMARTER rules - specific, measurable, agreed, realistic, time-bound, ethical, recorded. Training and development support maybe discuss to help the appraisee to meet the agreed objectives above. Other issues maybe covered (if any).</label>
+								<label htmlFor="b">Describe the purpose of the appraiser's job function. Review and discuss self-appraisal entries; appraiser's career direction options and wishes. Appraiser may like to discuss on specific objectives that will enable the appraisee to reach competence and to meet required performance in cuurent job, or achieve readiness for, the next job level/type, or if no particular next role is identified or sought, to achieve the desired personal growth or experience. These objectives must adhere to the SMARTER rules - specific, measurable, agreed, realistic, time-bound, ethical, recorded. Training and development support maybe discuss to help the appraisee to meet the agreed objectives above. Other issues maybe covered (if any).</label>
 								<p className='hod-section-b' id='b' name='b'>{formData.B}</p>
 								{/* 'OK' button to close the form */}
 								<button className="hr-ok-btn" onClick={handleAppraisalOK}>OK</button>
@@ -483,7 +495,6 @@ function AppraisalForm() {
                     <div className="modal-confirm-form-content">
                         <span className="close-confirm-form" onClick={handleCloseModal}>&times;</span>
 							<>
-							<h2>Form Submitted</h2>
 							<h2>Details</h2>
 							{role === 'employee' && (
 								<p>Name: {employeeName}</p>

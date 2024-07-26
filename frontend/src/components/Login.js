@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import '../css/style_login.css'; // Import your CSS file
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login () {
     const [values, setValues] = useState({
@@ -21,24 +23,72 @@ function Login () {
 
             // non-existent username is entered
             if (data[0] === 1) {
-                alert("Wrong username!");
+                toast.error("Wrong username!", {
+                    position: 'bottom-right',
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                    closeButton: true,
+                    draggable: false,
+                    progress: undefined,
+                });
             }
             // username exists but wrong password
             else if (data[0] === 2) {
-                alert("Wrong password!");
+                toast.error("Wrong password!", {
+                    position: 'bottom-right',
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                    closeButton: true,
+                    draggable: false,
+                    progress: undefined,
+                });
             }
             // correct username and password, leads user to their respective home page
             else{
                 if (role === "HR") {
                     const name = data[0].hrName;
+                    toast.success("Login successful!", {
+                        position: 'bottom-right',
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        autoClose: 2500,
+                        closeOnClick: true,
+                        closeButton: true,
+                        draggable: false,
+                        progress: undefined,
+                    });
                     navigate('/hr', {state: {staffID: values.staffID, name}})
                 }
                 else if (role === "Employee") {
                     const name = data[0].employeeName;
+                    toast.success("Login successful!", {
+                        position: 'bottom-right',
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        autoClose: 2500,
+                        closeOnClick: true,
+                        closeButton: true,
+                        draggable: false,
+                        progress: undefined,
+                    });
                     navigate('/employee', {state: {staffID: values.staffID, name}})
                 }
                 else if (role === "HOD") {
                     const name = data[0].hodName;
+                    toast.success("Login successful!", {
+                        position: 'bottom-right',
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        autoClose: 2500,
+                        closeOnClick: true,
+                        closeButton: true,
+                        draggable: false,
+                        progress: undefined,
+                    });
                     navigate('/hod', {state: {staffID: values.staffID, name}})
                 }
                 else {
