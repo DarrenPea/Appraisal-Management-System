@@ -49,7 +49,7 @@ function HodHomeTable( { HOD_ID, name}) {
                 });
                 
                 const newAppraisals = await Promise.all(staffPromises);
-                setAppraisals(newAppraisals);
+                setAppraisals(newAppraisals.filter(item => item !== null));
             } catch (error) {
                 console.error('Error fetching data', error);
             }

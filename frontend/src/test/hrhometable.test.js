@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import axios from 'axios';
 import HrHomeTable from '../components/hrhometable';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 
 // Mock useNavigate before importing the component
 import { useNavigate } from 'react-router-dom';
@@ -106,6 +106,51 @@ describe('HrHomeTable', () => {
         }
       });
     });
+  });
+
+  test('handles error when fetching appraisal data', async () => {
+    console.error = jest.fn();
+    axios.get.mockRejectedValueOnce(new Error('API error'));
+  
+    render(
+      <MemoryRouter>
+        <HrHomeTable HR_ID="123" name="John Doe" />
+      </MemoryRouter>
+    );
+  
+    await waitFor(() => {
+      expect(console.error).toHaveBeenCalledWith('Error fetching data', expect.any(Error));
+    });
+  
+    expect(screen.getByText('No actions are needed at this time.')).toBeInTheDocument();
+  });
+
+  test('handles error when fetching employee data', async () => {
+    console.error = jest.fn();
+    axios.get.mockResolvedValueOnce({ data: [{ 
+      employeeID: 'emp123',
+      appraisalType: 'Annual',
+      dueDate: '2023-12-31',
+      statusEmployee: 0,
+      statusHOD: 0,
+      hodID: 'hod123',
+      formID: 'form123',
+    }] });
+    axios.post.mockRejectedValueOnce(new Error('API error'));
+  
+    render(
+      <MemoryRouter>
+        <HrHomeTable HR_ID="123" name="John Doe" />
+      </MemoryRouter>
+    );
+  
+    await waitFor(() => {
+      expect(console.error).toHaveBeenCalledWith('Error fetching second response', expect.any(Error));
+    });
+  
+    // Check that no appraisal data is rendered
+    expect(screen.queryByText('Annual')).not.toBeInTheDocument();
+    expect(screen.getByText('No actions are needed at this time.')).toBeInTheDocument();
   });
 
   test('renders view buttons correctly', async () => {

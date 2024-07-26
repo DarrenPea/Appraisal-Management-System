@@ -1,4 +1,3 @@
-// EmployeeHome.test.js
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import EmployeeHome from '../components/employeehome';

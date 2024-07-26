@@ -5,6 +5,7 @@ import axios from 'axios';
 import AppraisalForm from '../components/appraisalform';
 
 jest.mock('axios');
+const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
@@ -19,7 +20,7 @@ jest.mock('react-router-dom', () => ({
       employeeID: '789'
     }
   }),
-  useNavigate: () => jest.fn()
+  useNavigate: () => mockNavigate
 }));
 
 describe('AppraisalForm', () => {
@@ -29,6 +30,7 @@ describe('AppraisalForm', () => {
   });
 
   afterEach(() => {
+	jest.clearAllMocks();
 	window.confirm.mockRestore();
   });
 
@@ -112,6 +114,7 @@ describe('AppraisalForm', () => {
     await act(async () => {
 		fireEvent.click(submitButton);
 	});
+	// The window.confirm will automatically return true due to our mock
     expect(screen.getByText(/Details/i)).toBeInTheDocument();
   });
 
@@ -219,4 +222,114 @@ describe('AppraisalForm', () => {
     expect(screen.getByText(/Department: IT/i)).toBeInTheDocument();
     expect(screen.getByText(/Purpose: Annual/i)).toBeInTheDocument();
   });
+
+  test('navigates to /employee after employee submits form', async () => {
+	jest.spyOn(require('react-router-dom'), 'useLocation').mockReturnValue({
+	  state: { 
+		role: 'employee',
+		staffID: '456',
+		staffName: 'John Doe',
+		formID: '123',
+		employeeName: 'John Doe',
+		department: 'IT',
+		type: 'Annual',
+		employeeID: '789'
+	  }
+	});
+  
+	await act(async () => {
+	  render(
+		<MemoryRouter>
+		  <AppraisalForm />
+		</MemoryRouter>
+	  );
+	});
+  
+	const submitButton = screen.getByText(/Submit/i);
+	await act(async () => {
+	  fireEvent.click(submitButton);
+	});
+  
+	const confirmButton = await screen.findByText(/OK/i);
+	await act(async () => {
+	  fireEvent.click(confirmButton);
+	});
+  
+	expect(mockNavigate).toHaveBeenCalledWith('/employee', { state: { staffID: '456', name: 'John Doe' } });
+  });
+  
+  test('navigates to /hod after HOD submits form', async () => {
+	jest.spyOn(require('react-router-dom'), 'useLocation').mockReturnValue({
+	  state: { 
+		role: 'hod',
+		staffID: '789',
+		staffName: 'Jane Smith',
+		formID: '123',
+		employeeName: 'John Doe',
+		department: 'IT',
+		type: 'Annual',
+		employeeID: '456'
+	  }
+	});
+  
+	axios.post.mockResolvedValueOnce({
+	  data: [{
+		jobFunction: 'Software Developer',
+		KPI: 'Completed 10 projects',
+		disciplinaryRecord: 'None',
+		attendanceRecord: '98%'
+	  }]
+	});
+  
+	await act(async () => {
+	  render(
+		<MemoryRouter>
+		  <AppraisalForm />
+		</MemoryRouter>
+	  );
+	});
+  
+	const submitButton = screen.getByText(/Submit/i);
+	await act(async () => {
+	  fireEvent.click(submitButton);
+	});
+  
+	const confirmButton = await screen.findByText(/OK/i);
+	await act(async () => {
+	  fireEvent.click(confirmButton);
+	});
+  
+	expect(mockNavigate).toHaveBeenCalledWith('/hod', { state: { staffID: '789', name: 'Jane Smith' } });
+  });
+  
+  test('navigates to /hr after HR views form', async () => {
+	jest.spyOn(require('react-router-dom'), 'useLocation').mockReturnValue({
+	  state: { 
+		role: 'hr',
+		staffID: '101',
+		staffName: 'HR Person',
+		formID: '123',
+		employeeName: 'John Doe',
+		department: 'IT',
+		type: 'Annual',
+		employeeID: '456'
+	  }
+	});
+  
+	await act(async () => {
+	  render(
+		<MemoryRouter>
+		  <AppraisalForm />
+		</MemoryRouter>
+	  );
+	});
+  
+	const okButton = screen.getByText(/OK/i);
+	await act(async () => {
+	  fireEvent.click(okButton);
+	});
+  
+	expect(mockNavigate).toHaveBeenCalledWith('/hr', { state: { staffID: '101', name: 'HR Person' } });
+  });
+
 });

@@ -1,98 +1,253 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
 import axios from 'axios';
 import HodHomeTable from '../components/hodhometable';
-import { BrowserRouter } from 'react-router-dom';
 
 jest.mock('axios');
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => jest.fn(),
+}));
+jest.mock('../components/modal', () => ({ onClose, employeeID, employeeName }) => (
+  <div data-testid="modal">
+    Modal for {employeeName} (ID: {employeeID})
+    <button onClick={onClose}>Close</button>
+  </div>
+));
 
 describe('HodHomeTable', () => {
-
-  const mockHodResponse = [
-    { employeeID: 'Sara', appraisalType: 'Yearly', dueDate: '2024-11-01', statusEmployee: 0, statusHOD: 1, formID: '1' },
-    { employeeID: 'James', appraisalType: 'Confirmation', dueDate: '2024-11-02', statusEmployee: 1, statusHOD: 0, formID: '2' }
-  ];
-
-  const mockEmployeeResponse = [
-    { employeeName: 'Sarah Lee', department: 'manufacturing' },
-    { employeeName: 'James Tan', department: 'manufacturing' }
-  ];
+  const mockProps = {
+    HOD_ID: '123',
+    name: 'John Doe',
+  };
 
   beforeEach(() => {
-    axios.post.mockImplementation((url, { employeeID }) => {
-      if (employeeID === 'Sara') {
-        return Promise.resolve({ data: [{ employeeName: 'Sarah Lee', department: 'manufacturing' }] });
-      } else if (employeeID === 'James') {
-        return Promise.resolve({ data: [{ employeeName: 'James Tan', department: 'manufacturing' }] });
-      }
-      return Promise.reject(new Error('Not Found'));
+    jest.clearAllMocks();
+  });
+
+  test('renders no actions message when no appraisals', async () => {
+    axios.post.mockResolvedValueOnce({ data: [] });
+
+    render(
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('No actions are needed at this time.')).toBeInTheDocument();
+    });
+  });
+
+  test('renders table with appraisal data', async () => {
+    const mockAppraisalData = [{
+      employeeID: 'emp123',
+      appraisalType: 'Annual',
+      dueDate: '2023-12-31',
+      statusEmployee: 0,
+      statusHOD: 0,
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'Jane Smith',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
+    render(
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+      expect(screen.getByText('IT')).toBeInTheDocument();
+      expect(screen.getByText('Annual')).toBeInTheDocument();
+      expect(screen.getByText('2023-12-31')).toBeInTheDocument();
+      expect(screen.getAllByText('Pending')).toHaveLength(2);
+    });
+  });
+
+  test('Fill up button is enabled when employee has submitted and HOD is pending', async () => {
+    const mockAppraisalData = [{
+      employeeID: 'emp123',
+      appraisalType: 'Annual',
+      dueDate: '2023-12-31',
+      statusEmployee: 1,
+      statusHOD: 0,
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'Jane Smith',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
+    render(
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const fillUpButton = screen.getByText('Fill up');
+      expect(fillUpButton).toBeEnabled();
+    });
+  });
+
+  test('Fill up button is disabled when HOD has already submitted', async () => {
+    const mockAppraisalData = [{
+      employeeID: 'emp123',
+      appraisalType: 'Annual',
+      dueDate: '2023-12-31',
+      statusEmployee: 1,
+      statusHOD: 1,
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'Jane Smith',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
+    render(
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const fillUpButton = screen.getByText('Fill up');
+      expect(fillUpButton).toBeDisabled();
+    });
+  });
+
+  test('clicking Fill up button navigates to form page', async () => {
+    const mockNavigate = jest.fn();
+    jest.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(mockNavigate);
+
+    const mockAppraisalData = [{
+      employeeID: 'emp123',
+      appraisalType: 'Annual',
+      dueDate: '2023-12-31',
+      statusEmployee: 1,
+      statusHOD: 0,
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'Jane Smith',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
+    render(
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const fillUpButton = screen.getByText('Fill up');
+      fireEvent.click(fillUpButton);
     });
 
-    axios.post.mockResolvedValueOnce({ data: mockHodResponse });
+    expect(mockNavigate).toHaveBeenCalledWith('/form', {
+      state: {
+        formID: 'form123',
+        staffID: '123',
+        role: "hod",
+        employeeName: 'Jane Smith',
+        department: 'IT',
+        type: 'Annual',
+        employeeID: 'emp123',
+        staffName: 'John Doe'
+      }
+    });
   });
 
-  test('renders without crashing', async () => {
+  test('clicking View button opens modal', async () => {
+    const mockAppraisalData = [{
+      employeeID: 'emp123',
+      appraisalType: 'Annual',
+      dueDate: '2023-12-31',
+      statusEmployee: 0,
+      statusHOD: 0,
+      formID: 'form123',
+    }];
+    const mockEmployeeData = [{
+      employeeName: 'Jane Smith',
+      department: 'IT',
+    }];
+
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+    axios.post.mockResolvedValueOnce({ data: mockEmployeeData });
+
     render(
-      <BrowserRouter>
-        <HodHomeTable HOD_ID="123" name="Test HOD" />
-      </BrowserRouter>
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
     );
 
     await waitFor(() => {
-    expect(screen.getByText('Sarah Lee')).toBeInTheDocument();
-		expect(screen.getByText('James Tan')).toBeInTheDocument();
-	  });
+      const viewButton = screen.getByText('View');
+      fireEvent.click(viewButton);
+    });
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument();
+    expect(screen.getByText('Modal for Jane Smith (ID: emp123)')).toBeInTheDocument();
   });
 
-  test('displays no actions message when no appraisals', async () => {
-    axios.post.mockResolvedValueOnce({ data: [] });
-    
-    render(
-      <BrowserRouter>
-        <HodHomeTable HOD_ID="123" name="Test HOD" />
-      </BrowserRouter>
-    );
+  test('handles error when fetching appraisal data', async () => {
+    console.error = jest.fn();
+    axios.post.mockRejectedValueOnce(new Error('API error'));
 
-    await waitFor(() => expect(screen.getByText('No actions are needed at this time.')).toBeInTheDocument());
-  });
-
-  test('opens modal on view button click', async () => {
     render(
-      <BrowserRouter>
-        <HodHomeTable HOD_ID="123" name="Test HOD" />
-      </BrowserRouter>
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
     );
 
     await waitFor(() => {
-		const elements = screen.getAllByText('View');
-		expect(elements).toHaveLength(2);
-	  });  
-
-	  const viewButtons = screen.getAllByText('View');
-	  fireEvent.click(viewButtons[0]);
-
-    // Check for modal content
-	await waitFor(() => {
-		const elements = screen.getAllByText('Sarah Lee');
-		expect(elements).toHaveLength(2);
-	  });  
+      expect(console.error).toHaveBeenCalledWith('Error fetching data', expect.any(Error));
+    });
   });
 
-  test('disables fill up button when conditions are met', async () => {
+  test('handles error when fetching employee data', async () => {
+    console.error = jest.fn();
+    axios.post.mockResolvedValueOnce({ data: [{ 
+        employeeID: 'emp123',
+        appraisalType: 'Annual',
+        dueDate: '2023-12-31',
+        statusEmployee: 0,
+        statusHOD: 0,
+        formID: 'form123',
+    }] });
+    axios.post.mockRejectedValueOnce(new Error('API error'));
+
     render(
-      <BrowserRouter>
-        <HodHomeTable HOD_ID="123" name="Test HOD" />
-      </BrowserRouter>
+        <MemoryRouter>
+            <HodHomeTable {...mockProps} />
+        </MemoryRouter>
     );
 
     await waitFor(() => {
-		const elements = screen.getAllByText('Fill up');
-		expect(elements).toHaveLength(2);
-	});
-	
+        expect(console.error).toHaveBeenCalledWith('Error fetching second response', expect.any(Error));
+    });
 
-    const fillUpButton = screen.getAllByText('Fill up');
-    expect(fillUpButton[0]).toBeDisabled();
+    // Check that no appraisal data is rendered
+    expect(screen.queryByText('Annual')).not.toBeInTheDocument();
+    expect(screen.getByText('No actions are needed at this time.')).toBeInTheDocument();
   });
+
+
 });
