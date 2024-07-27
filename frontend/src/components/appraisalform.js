@@ -215,17 +215,17 @@ function AppraisalForm() {
 				axios.post('http://localhost:3000/form/hod/submit', formData)
 				.then(setModalVisible(true));
 			}
+			toast.success("Form submitted!", {
+				position: 'bottom-right',
+				pauseOnFocusLoss: false,
+				pauseOnHover: false,
+				autoClose: 3000,
+				closeOnClick: true,
+				closeButton: true,
+				draggable: false,
+				progress: undefined,
+			});
         }
-		toast.success("Form submitted!", {
-			position: 'bottom-right',
-			pauseOnFocusLoss: false,
-			pauseOnHover: false,
-			autoClose: 3000,
-			closeOnClick: true,
-			closeButton: true,
-			draggable: false,
-			progress: undefined,
-		});
 	}
 
 	// handles 'OK' button for employee and HOD, lead back to home
@@ -238,11 +238,6 @@ function AppraisalForm() {
 		if(role === 'hod') {
 			navigate('/hod', {state: {staffID, name: staffName}});
 		}
-    };
-
-	// closes 'Form Submitted' modal
-	const handleCloseModal = () => {
-        setModalVisible(false);
     };
 
 	// questions for A2 section
@@ -493,20 +488,19 @@ function AppraisalForm() {
 			{modalVisible && (
                 <div className="modal-confirm-form">
                     <div className="modal-confirm-form-content">
-                        <span className="close-confirm-form" onClick={handleCloseModal}>&times;</span>
-							<>
-							<h2>Details</h2>
-							{role === 'employee' && (
-								<p>Name: {employeeName}</p>
-							)}
-							{(role === 'hod' || role === 'hr') && (
-								<p>Employee Name: {employeeName}</p>
-							)}
-							<p>Department: {department}</p>
-							<p>Purpose: {type}</p>
-							</>
+						<>
+						<h2>Details</h2>
+						{role === 'employee' && (
+							<p>Name: {employeeName}</p>
+						)}
+						{(role === 'hod' || role === 'hr') && (
+							<p>Employee Name: {employeeName}</p>
+						)}
+						<p>Department: {department}</p>
+						<p>Purpose: {type}</p>
+						</>
 						{/* 'OK' button to close the form */}
-                        <button className="close-confirm-form-btn" onClick={handleConfirm}>OK</button>
+						<button className="close-confirm-form-btn" onClick={handleConfirm}>OK</button>
                     </div>
                 </div>
             )}

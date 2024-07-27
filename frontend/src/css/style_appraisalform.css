@@ -320,14 +320,6 @@ form textarea {
     text-align: center;
 }
 
-.close-confirm-form {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5em;
-    cursor: pointer;
-}
-
 .appraisal-form-submit-btn {
     padding: 10px 15px;
     margin-top: 50px;
