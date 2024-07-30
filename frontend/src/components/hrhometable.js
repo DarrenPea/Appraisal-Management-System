@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 function HrHomeTable( { HR_ID, name } ) {
 	const navigate = useNavigate();
     const [appraisals, setAppraisals] = useState([]);
-	const today = new Date();
 
     useEffect(() => {
 		// fetch all forms for HR
@@ -84,11 +83,21 @@ function HrHomeTable( { HR_ID, name } ) {
 			</thead>
 			<tbody>
 				{appraisals
-					.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+					.sort((a, b) => {
+						const isAOverdue = a.employeeStatus === 0 || a.status === 0;
+						const isBOverdue = b.employeeStatus === 0 || b.status === 0;
+
+						// prioritize overdue rows
+						if (isAOverdue && !isBOverdue) return -1;
+						if (!isAOverdue && isBOverdue) return 1;
+
+						// if both are overdue or neither, sort by due dates
+						return new Date(a.dueDate) - new Date(b.dueDate);
+					})
 					.map((appraisal, index) => {
-						const isOverdue = new Date(appraisal.dueDate) < today;
+						const isOverdue = appraisal.employeeStatus === 0 || appraisal.status === 0;
 						return (
-							<tr key={index} className={`hr-table-row ${(isOverdue && (appraisal.status === 0)) ? 'overdue' : ''}`}>
+							<tr key={index} className={`hr-table-row ${isOverdue ? 'overdue' : ''}`}>
 								<td>{appraisal.employeeName}</td>
 								<td>{appraisal.department}</td>
 								<td>{appraisal.type}</td>

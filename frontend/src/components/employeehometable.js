@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 function EmployeeHomeTable({staffID, name}) {
 	const [appraisals, setAppraisals] = useState([]);
 	const navigate = useNavigate();
-	const today = new Date();
 
 	useEffect(() => {
 		// fetch form for employee using employeeID
@@ -81,11 +80,21 @@ function EmployeeHomeTable({staffID, name}) {
             </thead>
             <tbody>
                 {appraisals
-					.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+					.sort((a, b) => {
+						const isAOverdue = a.employeeStatus === 0;
+						const isBOverdue = b.employeeStatus === 0;
+
+						// prioritize overdue rows
+						if (isAOverdue && !isBOverdue) return -1;
+						if (!isAOverdue && isBOverdue) return 1;
+
+						// if both are overdue or neither, sort by due dates
+						return new Date(a.dueDate) - new Date(b.dueDate);
+					})
 					.map((appraisal, index) => {
-						const isOverdue = new Date(appraisal.dueDate) < today;
+						const isOverdue = appraisal.employeeStatus === 0;
 						return(
-							<tr key={index} className={`employee-table-row ${(isOverdue && (appraisal.employeeStatus === 0)) ? 'overdue' : ''}`}>
+							<tr key={index} className={`employee-table-row ${isOverdue ? 'overdue' : ''}`}>
 								<td>{appraisal.employeeName}</td>
 								<td>{appraisal.department}</td>
 								<td>{appraisal.type}</td>

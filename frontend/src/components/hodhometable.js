@@ -9,7 +9,6 @@ function HodHomeTable( { HOD_ID, name}) {
     const [currentEmployeeName, setCurrentEmployeeName] = useState(null);
     const [appraisals, setAppraisals] = useState([]);
     const navigate = useNavigate();
-    const today = new Date();
 
     useEffect(() => {
         // fetch forms for HOD using hodID
@@ -96,11 +95,21 @@ function HodHomeTable( { HOD_ID, name}) {
             </thead>
             <tbody>
                 {appraisals
-                    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-                    .map((appraisal, index) => {
-                        const isOverdue = new Date(appraisal.dueDate) < today;
+                    .sort((a, b) => {
+						const isAOverdue = a.employeeStatus === 0 || a.status === 0;
+						const isBOverdue = b.employeeStatus === 0 || b.status === 0;
+
+						// prioritize overdue rows
+						if (isAOverdue && !isBOverdue) return -1;
+						if (!isAOverdue && isBOverdue) return 1;
+
+						// if both are overdue or neither, sort by due dates
+						return new Date(a.dueDate) - new Date(b.dueDate);
+					})
+					.map((appraisal, index) => {
+						const isOverdue = appraisal.employeeStatus === 0 || appraisal.status === 0;
                         return (
-                            <tr key={index} className={`hod-table-row ${(isOverdue && (appraisal.status === 0)) ? 'overdue' : ''}`}>
+                            <tr key={index} className={`hod-table-row ${isOverdue ? 'overdue' : ''}`}>
                                 <td>{appraisal.employeeName}</td>
                                 <td>{appraisal.department}</td>
                                 <td>{appraisal.type}</td>
