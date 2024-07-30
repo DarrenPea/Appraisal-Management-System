@@ -184,10 +184,52 @@ async function retrieveForm(formID){
   }
 } 
 
-// /form/HOD/submit
-async function updateForm(formID, formfields, statusHOD = false) {
+// /form/HOD/submit (PREVIOUS VERSION)
+// async function updateForm(formID, formfields, statusHOD = false) {
+//   if (formfields.length != 51) {
+//     throw new Error("updateOne: formfields length is not 51, it is " + formfields.length);
+//   }
+
+//   try {
+    
+//     // we dont insert into formID cause that'll be auto generated
+//     const query = `
+//     UPDATE ${tableName} SET
+//     statusEmployee = ?, statusHOD = ?, lastUpdated = ?, 
+//     A1 = ?, A2_1 = ?, A2_2 = ?, A2_3 = ?, A2_4 = ?, A2_5 = ?, A2_6 = ?, A2_7 = ?, A2_8 = ?, 
+//     A3_1 = ?, CommentsA3_1 = ?, A3_2 = ?, CommentsA3_2 = ?, A3_3 = ?, CommentsA3_3 = ?, 
+//     A3_4 = ?, CommentsA3_4 = ?, A3_5 = ?, CommentsA3_5 = ?, A3_6 = ?, CommentsA3_6 = ?, 
+//     A3_7 = ?, CommentsA3_7 = ?, A3_8 = ?, CommentsA3_8 = ?, A3_9 = ?, CommentsA3_9 = ?, 
+//     A3_10 = ?, CommentsA3_10 = ?, A3_11 = ?, CommentsA3_11 = ?, A3_12 = ?, CommentsA3_12 = ?, 
+//     A3_13 = ?, CommentsA3_13 = ?, A3_14 = ?, CommentsA3_14 = ?, A3_15 = ?, CommentsA3_15 = ?, 
+//     A3_16 = ?, CommentsA3_16 = ?, A3_17 = ?, CommentsA3_17 = ?, A3_18 = ?, CommentsA3_18 = ?, 
+//     A3_19 = ?, CommentsA3_19 = ?, A3_20 = ?, CommentsA3_20 = ?, overallRating = ?, b = ?
+//     WHERE formID = ? 
+// `;
+//     // Add formID and current year to the values array
+//     const values = [true, statusHOD, new Date(), ...formfields, formID]
+
+//     await db.pool.query(query, values);
+//     return [true];
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error('Form not retrieved, problem with retrieveAllForms');
+//   }
+// }
+
+/*to include flag for saving form /form/HOD/submit (NEW VERSION)*/
+async function updateForm(formID, formfields, saveStatus, statusHOD = false) {
   if (formfields.length != 51) {
     throw new Error("updateOne: formfields length is not 51, it is " + formfields.length);
+  }
+
+  if (saveStatus && statusHOD===false) {
+    statusEmployee = false;
+  } else if (saveStatus && statusHOD){
+    statusHOD = false;
+    statusEmployee = true;
+  } else {
+    statusEmployee = true;
   }
 
   try {
@@ -204,10 +246,10 @@ async function updateForm(formID, formfields, statusHOD = false) {
     A3_13 = ?, CommentsA3_13 = ?, A3_14 = ?, CommentsA3_14 = ?, A3_15 = ?, CommentsA3_15 = ?, 
     A3_16 = ?, CommentsA3_16 = ?, A3_17 = ?, CommentsA3_17 = ?, A3_18 = ?, CommentsA3_18 = ?, 
     A3_19 = ?, CommentsA3_19 = ?, A3_20 = ?, CommentsA3_20 = ?, overallRating = ?, b = ?
-    WHERE formID = ? 
-`;
+    WHERE formID = ? `;
+
     // Add formID and current year to the values array
-    const values = [true, statusHOD, new Date(), ...formfields, formID]
+    const values = [statusEmployee, statusHOD, new Date(), ...formfields, formID]
 
     await db.pool.query(query, values);
     return [true];
@@ -216,7 +258,6 @@ async function updateForm(formID, formfields, statusHOD = false) {
     throw new Error('Form not retrieved, problem with retrieveAllForms');
   }
 }
-
 
 // /form/HOD/status
 // returns an array where each element is an array that represents a form
