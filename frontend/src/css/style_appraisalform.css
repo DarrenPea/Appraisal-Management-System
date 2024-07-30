@@ -320,6 +320,35 @@ form textarea {
     text-align: center;
 }
 
+.save-submit-container {
+    display: flex;
+    gap: 20px;
+}
+
+.appraisal-form-save-btn {
+    padding: 10px 15px;
+    margin-top: 50px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #949494;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    max-width: 150px;
+    text-align: center;
+}
+
+.appraisal-form-save-btn:hover {
+    background-color: #656363;
+}
+
+.appraisal-form-save-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 .appraisal-form-submit-btn {
     padding: 10px 15px;
     margin-top: 50px;
@@ -408,7 +437,17 @@ form textarea {
     .rating-options label {
         margin-right: 10px; /* Increased margin for clarity */
     }
+
+    .save-submit-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .appraisal-form-save-btn {
+        min-width: 80px;
+    }
     .appraisal-form-submit-btn {
-        min-width: 75px;
+        margin-top: 0px;
+        min-width: 80px;
     }
 }

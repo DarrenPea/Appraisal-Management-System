@@ -174,6 +174,8 @@ function AppraisalForm() {
 
 	}, [formID, employeeID, role]);
 
+	const flattenedFormData = { ...formData };
+
 	// handle changes in form data
 	const handleAppraisalFormChange = (e) => {
         const { name, value } = e.target;
@@ -208,11 +210,11 @@ function AppraisalForm() {
 
 		if (window.confirm("Are you sure you want to submit the appraisal form?")) {
 			if(role === 'employee') {
-				axios.post('http://localhost:3000/form/employee/submit', formData)
+				axios.post('http://localhost:3000/form/employee/submit', { saveStatus: false, ...flattenedFormData })
 				.then(setModalVisible(true));
 			}
 			if(role === 'hod') {
-				axios.post('http://localhost:3000/form/hod/submit', formData)
+				axios.post('http://localhost:3000/form/hod/submit', { saveStatus: false, ...flattenedFormData })
 				.then(setModalVisible(true));
 			}
 			toast.success("Form submitted!", {
@@ -239,6 +241,33 @@ function AppraisalForm() {
 			navigate('/hod', {state: {staffID, name: staffName}});
 		}
     };
+
+	// handles 'Save' button for employee and HOD
+	const handleSave = (e) => {
+		e.preventDefault();
+
+		if (window.confirm("Do you want to save the form?")) {
+			if(role === 'employee') {
+				axios.post('http://localhost:3000/form/employee/submit', { saveStatus: true, ...flattenedFormData })
+				.then(navigate('/employee', {state: {staffID, name: staffName}}));
+			}
+			if(role === 'hod') {
+				axios.post('http://localhost:3000/form/hod/submit', { saveStatus: true, ...flattenedFormData })
+				.then(navigate('/hod', {state: {staffID, name: staffName}}));
+			}
+			toast.info("Form saved!", {
+				position: 'bottom-right',
+				pauseOnFocusLoss: false,
+				pauseOnHover: false,
+				autoClose: 3000,
+				closeOnClick: true,
+				closeButton: true,
+				draggable: false,
+				progress: undefined,
+			});
+        }
+	};
+
 
 	// questions for A2 section
 	const a2Labels = [
@@ -477,7 +506,10 @@ function AppraisalForm() {
 							)}
 							{/* employee and HOD to submit their forms */}
 							{(role === 'employee' || role === 'hod') && (
-								<button className='appraisal-form-submit-btn' type="submit">Submit</button>
+								<div className="save-submit-container">
+									<button className="appraisal-form-save-btn" onClick={handleSave}>Save</button>
+									<button className='appraisal-form-submit-btn' type="submit">Submit</button>
+								</div>
 							)}						
 						</form>
 					</div>
