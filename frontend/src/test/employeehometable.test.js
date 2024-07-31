@@ -59,7 +59,7 @@ describe('EmployeeHomeTable', () => {
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('IT')).toBeInTheDocument();
       expect(screen.getByText('Annual')).toBeInTheDocument();
-      expect(screen.getByText('2023-12-31')).toBeInTheDocument();
+      expect(screen.getByText('2024-01-01')).toBeInTheDocument();
       expect(screen.getByText('Pending')).toBeInTheDocument();
     });
   });
@@ -95,15 +95,15 @@ describe('EmployeeHomeTable', () => {
     });
   });
 
-  test('renders non-past due appraisals without red background', async () => {
+  test('renders completed past due appraisals without red background', async () => {
     const futureDueDate = new Date();
-    futureDueDate.setDate(futureDueDate.getDate() + 1); // Tomorrow's date
+    futureDueDate.setDate(futureDueDate.getDate() - 1); // Yesterday's date
     const futureDueDateString = futureDueDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
 
     const mockAppraisalData = [{
       appraisalType: 'Annual',
       dueDate: futureDueDateString,
-      statusEmployee: 0,
+      statusEmployee: 1,
       formID: 'form123',
     }];
     const mockEmployeeData = [{
@@ -126,15 +126,15 @@ describe('EmployeeHomeTable', () => {
     });
   });
 
-  test('does not apply red background to overdue but submitted appraisals', async () => {
-    const pastDueDate = new Date();
-    pastDueDate.setDate(pastDueDate.getDate() - 1); // Yesterday's date
-    const pastDueDateString = pastDueDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  test('does not apply red background to unsubmitted but not overdue appraisals', async () => {
+    const futureDueDate = new Date();
+    futureDueDate.setDate(futureDueDate.getDate() + 1);
+    const futureDueDateString = futureDueDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
 
     const mockAppraisalData = [{
       appraisalType: 'Annual',
-      dueDate: pastDueDateString,
-      statusEmployee: 1, // Submitted
+      dueDate: futureDueDateString,
+      statusEmployee: 0,
       formID: 'form123',
     }];
     const mockEmployeeData = [{

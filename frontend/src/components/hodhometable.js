@@ -9,6 +9,7 @@ function HodHomeTable( { HOD_ID, name}) {
     const [currentEmployeeName, setCurrentEmployeeName] = useState(null);
     const [appraisals, setAppraisals] = useState([]);
     const navigate = useNavigate();
+    const today = new Date();
 
     useEffect(() => {
         // fetch forms for HOD using hodID
@@ -30,6 +31,7 @@ function HodHomeTable( { HOD_ID, name}) {
                         const secondResponse = await axios.post('http://localhost:3000/employee/HR/status', { employeeID: item.employeeID});
                         const { employeeName, department } = secondResponse.data[0];
                         const new_date = new Date(item.dueDate);
+                        new_date.setDate(new_date.getDate() + 1);
                         const due_date = new_date.toISOString().split('T')[0];
 
                         return {
@@ -107,9 +109,9 @@ function HodHomeTable( { HOD_ID, name}) {
 						return new Date(a.dueDate) - new Date(b.dueDate);
 					})
 					.map((appraisal, index) => {
-						const isOverdue = appraisal.employeeStatus === 0 || appraisal.status === 0;
+                        const isOverdue = today > new Date(appraisal.dueDate);
                         return (
-                            <tr key={index} className={`hod-table-row ${isOverdue ? 'overdue' : ''}`}>
+                            <tr key={index} className={`hod-table-row ${(isOverdue && (appraisal.employeeStatus === 0 || appraisal.status === 0)) ? 'overdue' : ''}`}>
                                 <td>{appraisal.employeeName}</td>
                                 <td>{appraisal.department}</td>
                                 <td>{appraisal.type}</td>

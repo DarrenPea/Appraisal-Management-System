@@ -67,7 +67,7 @@ describe('HodHomeTable', () => {
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
       expect(screen.getByText('IT')).toBeInTheDocument();
       expect(screen.getByText('Annual')).toBeInTheDocument();
-      expect(screen.getByText('2023-12-31')).toBeInTheDocument();
+      expect(screen.getByText('2024-01-01')).toBeInTheDocument();
       expect(screen.getAllByText('Pending')).toHaveLength(2);
     });
   });
@@ -299,7 +299,7 @@ describe('HodHomeTable', () => {
     });
   });
 
-  test('renders overdue forms with red background', async () => {
+  test('renders completed forms with non-red background', async () => {
     const pastDate = new Date();
     pastDate.setDate(pastDate.getDate() - 1);
     const pastDateString = pastDate.toISOString().split('T')[0];
@@ -308,8 +308,8 @@ describe('HodHomeTable', () => {
       employeeID: 'emp123',
       appraisalType: 'Annual',
       dueDate: pastDateString,
-      statusEmployee: 0,
-      statusHOD: 0,
+      statusEmployee: 1,
+      statusHOD: 1,
       formID: 'form123',
     }];
     const mockEmployeeData = [{
@@ -328,11 +328,11 @@ describe('HodHomeTable', () => {
 
     await waitFor(() => {
       const row = screen.getByRole('row', { name: /Jane Smith IT Annual/i });
-      expect(row).toHaveClass('overdue');
+      expect(row).not.toHaveClass('overdue');
     });
   });
 
-  test('sorts appraisals by due date', async () => {
+  test('sorts appraisals by due date if all have not submitted', async () => {
     const mockAppraisalData = [
       {
         employeeID: 'emp123',
@@ -382,6 +382,138 @@ describe('HodHomeTable', () => {
       expect(rows[2]).toHaveTextContent('Jane Smith');
     });
   });  
+
+  test('sorts appraisals by due date if all have submitted', async () => {
+    const mockAppraisalData = [
+      {
+        employeeID: 'emp123',
+        appraisalType: 'Annual',
+        dueDate: '2023-12-31',
+        statusEmployee: 1,
+        statusHOD: 1,
+        formID: 'form123',
+      },
+      {
+        employeeID: 'emp456',
+        appraisalType: 'Mid-Year',
+        dueDate: '2023-06-30',
+        statusEmployee: 1,
+        statusHOD: 1,
+        formID: 'form456',
+      },
+      {
+        employeeID: 'emp789',
+        appraisalType: 'Mid-Year',
+        dueDate: '2024-07-20',
+        statusEmployee: 1,
+        statusHOD: 1,
+        formID: 'form789',
+      }
+    ];
+
+    const mockEmployeeData1 = [{
+      employeeName: 'Jane Smith',
+      department: 'IT',
+    }];
+  
+    const mockEmployeeData2 = [{
+      employeeName: 'Bob Johnson',
+      department: 'HR',
+    }];
+
+    const mockEmployeeData3 = [{
+      employeeName: 'Alice Doe',
+      department: 'Finance',
+    }];
+
+    // Mock the first axios call to return appraisal data
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+  
+    // Mock subsequent axios calls for each employee
+    axios.post
+      .mockResolvedValueOnce({ data: mockEmployeeData1 })
+      .mockResolvedValueOnce({ data: mockEmployeeData2 })
+      .mockResolvedValueOnce({ data: mockEmployeeData3 });
+
+    render(
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const rows = screen.getAllByRole('row');
+      expect(rows[1]).toHaveTextContent('Bob Johnson'); // Earlier due date should be first
+      expect(rows[2]).toHaveTextContent('Jane Smith');
+      expect(rows[3]).toHaveTextContent('Alice Doe');
+    });
+  });
+
+  test('sorts appraisals by due date if some have submitted and some have not', async () => {
+    const mockAppraisalData = [
+      {
+        employeeID: 'emp123',
+        appraisalType: 'Annual',
+        dueDate: '2023-12-31',
+        statusEmployee: 1,
+        statusHOD: 0,
+        formID: 'form123',
+      },
+      {
+        employeeID: 'emp456',
+        appraisalType: 'Mid-Year',
+        dueDate: '2023-06-30',
+        statusEmployee: 1,
+        statusHOD: 1,
+        formID: 'form456',
+      },
+      {
+        employeeID: 'emp789',
+        appraisalType: 'Mid-Year',
+        dueDate: '2024-07-20',
+        statusEmployee: 0,
+        statusHOD: 0,
+        formID: 'form789',
+      }
+    ];
+
+    const mockEmployeeData1 = [{
+      employeeName: 'Jane Smith',
+      department: 'IT',
+    }];
+  
+    const mockEmployeeData2 = [{
+      employeeName: 'Bob Johnson',
+      department: 'HR',
+    }];
+
+    const mockEmployeeData3 = [{
+      employeeName: 'Alice Doe',
+      department: 'Finance',
+    }];
+
+    // Mock the first axios call to return appraisal data
+    axios.post.mockResolvedValueOnce({ data: mockAppraisalData });
+  
+    // Mock subsequent axios calls for each employee
+    axios.post
+      .mockResolvedValueOnce({ data: mockEmployeeData1 })
+      .mockResolvedValueOnce({ data: mockEmployeeData2 })
+      .mockResolvedValueOnce({ data: mockEmployeeData3 });
+
+    render(
+      <MemoryRouter>
+        <HodHomeTable {...mockProps} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const rows = screen.getAllByRole('row');
+      expect(rows[1]).toHaveTextContent('Jane Smith');
+      expect(rows[2]).toHaveTextContent('Alice Doe');
+      expect(rows[3]).toHaveTextContent('Bob Johnson');
+    });
+  });
 
   test('handles error when fetching appraisal data', async () => {
     console.error = jest.fn();
