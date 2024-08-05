@@ -64,7 +64,7 @@ describe("appraisalFormModel insertion unit tests", () => {
         expect(time.getMonth() + 1).toEqual(realDateCreated[0].dateCreated.getMonth()+1);
     });
     
-    test("Testing: updateForm(formID, formfields, statusHOD = true) for HOD", async () => {
+    test("Testing: updateForm(formID, formfields, saveStatus, statusHOD = true) for HOD", async () => {
         const formID = 1;
         const formfields = [
             'EMPLOYEE-ANSWERS1.1',
@@ -119,6 +119,8 @@ describe("appraisalFormModel insertion unit tests", () => {
             4.3,
             'HOD-B' // Replace EMPLOYEE-ANSWERS23
         ];
+
+       
         
         // Define the expected form value with comments and 'B' fields replaced by HOD values.
         const expectedFormValue = [{
@@ -202,11 +204,11 @@ describe("appraisalFormModel retrieval unit tests", () => {
         const employeeID = 'E001';
 
         //ADJUST MONTH AND DATE ACCORDINGLY! due date is always one month from now.
-        const expectedDueDatemonth = 8;
+        const expectedDueDatemonth = 9;
         const expectedDueDateyear = 2024;
         
         const expectedFormID = 1;
-        const expectedStatusEmployee = 1;
+        const expectedStatusEmployee = 0;
         const expectedAppraisalType = 'Confirmation';
 
         const [value] = await appraisalFormModel.employeeStatus(employeeID);
@@ -278,8 +280,8 @@ describe("appraisalFormModel retrieval unit tests", () => {
             "formID": 1,
             "hodID": "M001",
             "overallRating": 4.3,
-            "statusEmployee": 1,
-            "statusHOD": 1 // Updated from 0 to 1
+            "statusEmployee": 0,
+            "statusHOD": 0 
           };        
         // [1,'E001', 'M001', true, true, 'confirmation', new Date('2023-10-01'), new Date('2023-10-01'), new Date('2023-04-06'), 'EMPLOYEE-ANSWERS1.1', 'EMPLOYEE-ANSWERS2.1', 'EMPLOYEE-ANSWERS2.2', 'EMPLOYEE-ANSWERS2.3', 'EMPLOYEE-ANSWERS2.4', 'EMPLOYEE-ANSWERS2.5', 'EMPLOYEE-ANSWERS2.6', 'EMPLOYEE-ANSWERS2.7', 'EMPLOYEE-ANSWERS2.8', 3, 'EMPLOYEE-ANSWERS3', 4, 'EMPLOYEE-ANSWERS4', 5, 'EMPLOYEE-ANSWERS5', 6, 'EMPLOYEE-ANSWERS6', 7, 'EMPLOYEE-ANSWERS7', 8, 'EMPLOYEE-ANSWERS8', 9, 'EMPLOYEE-ANSWERS9', 10, 'EMPLOYEE-ANSWERS10', 11, 'EMPLOYEE-ANSWERS11', 12, 'EMPLOYEE-ANSWERS12', 13, 'EMPLOYEE-ANSWERS13', 14, 'EMPLOYEE-ANSWERS14', 15, 'EMPLOYEE-ANSWERS15', 16, 'EMPLOYEE-ANSWERS16', 17, 'EMPLOYEE-ANSWERS17', 18, 'EMPLOYEE-ANSWERS18', 19, 'EMPLOYEE-ANSWERS19', 20, 'EMPLOYEE-ANSWERS20', 21, 'EMPLOYEE-ANSWERS21', 22, 'EMPLOYEE-ANSWERS22', 4.3, 'EMPLOYEE-ANSWERS23'];
         const [value] = await appraisalFormModel.retrieveForm(formID);
@@ -298,13 +300,13 @@ describe("appraisalFormModel retrieval unit tests", () => {
         expect(value).toEqual(expectedReturn);
 
         expect(dueDate.getFullYear()).toEqual(2024);
-        expect(dueDate.getMonth() + 1).toEqual(8);
+        expect(dueDate.getMonth() + 1).toEqual(9);
 
         expect(lastUpdated.getFullYear()).toEqual(2024);
-        expect(lastUpdated.getMonth() + 1).toEqual(7);
+        expect(lastUpdated.getMonth() + 1).toEqual(8);
 
         expect(dateCreated.getFullYear()).toEqual(2024);
-        expect(dateCreated.getMonth() + 1).toEqual(7);
+        expect(dateCreated.getMonth() + 1).toEqual(8);
     });
 
 
@@ -315,8 +317,8 @@ describe("appraisalFormModel retrieval unit tests", () => {
             "appraisalType": "Confirmation",
             "employeeID": "E001",
             "formID": 1,
-            "statusEmployee": 1,
-            "statusHOD": 1,
+            "statusEmployee": 0,
+            "statusHOD": 0,
         };
 
         const [value] = await appraisalFormModel.hodStatus(hodID);
@@ -325,7 +327,7 @@ describe("appraisalFormModel retrieval unit tests", () => {
 
         expect(value).toEqual(expectedReturn);
         expect(dueDate.getFullYear()).toEqual(2024);
-        expect(dueDate.getMonth() + 1).toEqual(8);
+        expect(dueDate.getMonth() + 1).toEqual(9);
 
     });
 
@@ -336,8 +338,8 @@ describe("appraisalFormModel retrieval unit tests", () => {
             "employeeID": "E001",
             "formID": 1,
             "hodID": "M001",
-            "statusEmployee": 1,
-            "statusHOD": 1,
+            "statusEmployee": 0,
+            "statusHOD": 0,
         };
         
         const [value] = await appraisalFormModel.hrStatus();
@@ -346,7 +348,7 @@ describe("appraisalFormModel retrieval unit tests", () => {
 
         expect(value).toEqual(expectedReturn);
         expect(dueDate.getFullYear()).toEqual(2024);
-        expect(dueDate.getMonth() + 1).toEqual(8);
+        expect(dueDate.getMonth() + 1).toEqual(9);
     });
     
     test ("Testing: retrieval of empty list when invalid IDs are given", async () => {
@@ -367,8 +369,9 @@ describe("appraisalFormModel retrieval unit tests", () => {
 
 
 describe("routes.appraisalform endpoint integration tests", () => {
-    test ("testing /form/employee/submit", async () => {
-        const formID = 1
+    test ("testing /form/employee/submit for saving the form", async () => {
+        const formID = 1;
+        const saveStatus = true;
         const formfields = [
             'EMPLOYEE-ANSWERS1.1',
             'EMPLOYEE-ANSWERS2.1',
@@ -439,8 +442,154 @@ describe("routes.appraisalform endpoint integration tests", () => {
     });
 
 
-    test("testing /form/hod/submit", async () => {
+    test ("testing /form/employee/submit for submitting the form", async () => {
         const formID = 1;
+        const saveStatus = false;
+        const formfields = [
+            'EMPLOYEE-ANSWERS1.1',
+            'EMPLOYEE-ANSWERS2.1',
+            'EMPLOYEE-ANSWERS2.2',
+            'EMPLOYEE-ANSWERS2.3',
+            'EMPLOYEE-ANSWERS2.4',
+            'EMPLOYEE-ANSWERS2.5',
+            'EMPLOYEE-ANSWERS2.6',
+            'EMPLOYEE-ANSWERS2.7',
+            'EMPLOYEE-ANSWERS2.8',
+            3,
+            'EMPLOYEE-ANSWERS3',
+            4,
+            'EMPLOYEE-ANSWERS4',
+            5,
+            'EMPLOYEE-ANSWERS5',
+            6,
+            'EMPLOYEE-ANSWERS6',
+            7,
+            'EMPLOYEE-ANSWERS7',
+            8,
+            'EMPLOYEE-ANSWERS8',
+            9,
+            'EMPLOYEE-ANSWERS9',
+            10,
+            'EMPLOYEE-ANSWERS10',
+            11,
+            'EMPLOYEE-ANSWERS11',
+            12,
+            'EMPLOYEE-ANSWERS12',
+            13,
+            'EMPLOYEE-ANSWERS13',
+            14,
+            'EMPLOYEE-ANSWERS14',
+            15,
+            'EMPLOYEE-ANSWERS15',
+            16,
+            'EMPLOYEE-ANSWERS16',
+            17,
+            'EMPLOYEE-ANSWERS17',
+            18,
+            'EMPLOYEE-ANSWERS18',
+            19,
+            'EMPLOYEE-ANSWERS19',
+            20,
+            'EMPLOYEE-ANSWERS20',
+            21,
+            'EMPLOYEE-ANSWERS21',
+            22,
+            'EMPLOYEE-ANSWERS22',
+            4.3,
+            'EMPLOYEE-ANSWERS23'
+        ]; 
+
+        const requestBody = [formID, ...formfields];
+        
+        const res = await request(app)
+            .post('/form/employee/submit')
+            .send(requestBody) // Send the correct data format
+            .set('Content-Type', 'application/json'); // Ensure JSON format
+
+        // check the status code
+        expect(res.statusCode).toBe(200);
+
+        const json = JSON.parse(res.text);
+        const expected = [true];
+        expect(json).toEqual(expected);
+    });
+
+    test("testing /form/hod/submit for saving the form", async () => {
+        const formID = 1;
+        const saveStatus = true;
+        // const statusHOD = true;
+        const formFields = [
+            'EMPLOYEE-ANSWERS1.1',
+            'EMPLOYEE-ANSWERS2.1',
+            'EMPLOYEE-ANSWERS2.2',
+            'EMPLOYEE-ANSWERS2.3',
+            'EMPLOYEE-ANSWERS2.4',
+            'EMPLOYEE-ANSWERS2.5',
+            'EMPLOYEE-ANSWERS2.6',
+            'EMPLOYEE-ANSWERS2.7',
+            'EMPLOYEE-ANSWERS2.8',
+            3,
+            'HOD-COMMENTS3', // Replace EMPLOYEE-ANSWERS3
+            4,
+            'HOD-COMMENTS4', // Replace EMPLOYEE-ANSWERS4
+            5,
+            'HOD-COMMENTS5', // Replace EMPLOYEE-ANSWERS5
+            6,
+            'HOD-COMMENTS6', // Replace EMPLOYEE-ANSWERS6
+            7,
+            'HOD-COMMENTS7', // Replace EMPLOYEE-ANSWERS7
+            8,
+            'HOD-COMMENTS8', // Replace EMPLOYEE-ANSWERS8
+            9,
+            'HOD-COMMENTS9', // Replace EMPLOYEE-ANSWERS9
+            10,
+            'HOD-COMMENTS10', // Replace EMPLOYEE-ANSWERS10
+            11,
+            'HOD-COMMENTS11', // Replace EMPLOYEE-ANSWERS11
+            12,
+            'HOD-COMMENTS12', // Replace EMPLOYEE-ANSWERS12
+            13,
+            'HOD-COMMENTS13', // Replace EMPLOYEE-ANSWERS13
+            14,
+            'HOD-COMMENTS14', // Replace EMPLOYEE-ANSWERS14
+            15,
+            'HOD-COMMENTS15', // Replace EMPLOYEE-ANSWERS15
+            16,
+            'HOD-COMMENTS16', // Replace EMPLOYEE-ANSWERS16
+            17,
+            'HOD-COMMENTS17', // Replace EMPLOYEE-ANSWERS17
+            18,
+            'HOD-COMMENTS18', // Replace EMPLOYEE-ANSWERS18
+            19,
+            'HOD-COMMENTS19', // Replace EMPLOYEE-ANSWERS19
+            20,
+            'HOD-COMMENTS20', // Replace EMPLOYEE-ANSWERS20
+            21,
+            'HOD-COMMENTS21', // Replace EMPLOYEE-ANSWERS21
+            22,
+            'HOD-COMMENTS22', // Replace EMPLOYEE-ANSWERS22
+            4.3,
+            'HOD-B' // Replace EMPLOYEE-ANSWERS23 
+        ];
+
+        const requestBody = [formID, ...formFields];
+        const res = await request(app)
+            .post("/form/hod/submit")
+            .send(requestBody)
+            .set('Content-Type', 'application/json'); // Ensure JSON format
+
+        // check the status code
+        expect(res.statusCode).toBe(200);
+        
+        const json = JSON.parse(res.text);
+        const expected = [true];
+        expect(json).toEqual(expected);
+    });
+
+
+    test("testing /form/hod/submit for submitting the form", async () => {
+        const formID = 1;
+        const saveStatus = false;
         // const statusHOD = true;
         const formFields = [
             'EMPLOYEE-ANSWERS1.1',
@@ -523,9 +672,9 @@ describe("routes.appraisalform endpoint integration tests", () => {
         expect(res.statusCode).toBe(200);
 
         const expected = {
-            formID: expect.any(Number),
-            statusEmployee: 1,
-            appraisalType: expect.any(String),
+            formID: 1,
+            statusEmployee: 0,
+            appraisalType: "Confirmation",
             dueDate: expect.any(String) // Assuming dueDate is in ISO string format
         };
     
@@ -547,11 +696,11 @@ test ("testing /form/hod/status", async () => {
 
         // formID, employeeID, statusEmployee, statusHOD, appraisalType, dueDate 
         const expected = {
-            formID: expect.any(Number),
+            formID: 1,
             employeeID: 'E001',
-            statusEmployee: 1,
-            statusHOD: 1,
-            appraisalType: expect.any(String),
+            statusEmployee: 0,
+            statusHOD: 0,
+            appraisalType: "Confirmation",
             dueDate: expect.any(String)
         };
 
@@ -561,7 +710,7 @@ test ("testing /form/hod/status", async () => {
 
     test ("testing /form/HR/status", async () => {
         const res = await request(app)
-        .post('/form/HR/status')
+        .get('/form/HR/status')
         .set('Content-Type', 'application/json'); // Ensure JSON format
 
     // Check the status code
@@ -571,8 +720,8 @@ test ("testing /form/hod/status", async () => {
         formID: expect.any(Number),
         employeeID: expect.any(String),
         hodID: expect.any(String),
-        statusEmployee: 1,
-        statusHOD: 1,
+        statusEmployee: 0,
+        statusHOD: 0,
         appraisalType: expect.any(String),
         dueDate: expect.any(String) // Assuming dueDate is a string (ISO format)
     };

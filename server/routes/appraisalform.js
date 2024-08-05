@@ -13,7 +13,7 @@ router.post("/employee/status", async(req,res) => {
         //     return res.status(404).json({ message: "Entry not found" });
         // }
 
-        res.send(JSON.stringify(form[0]));
+        res.json(form[0]);
     }catch(error){
         console.error(error);
         res.status(500).send(JSON.stringify({ message: 'Problem with retrieving employee status' }));
@@ -139,7 +139,7 @@ router.post("/hod/status", async(req,res) => {
         // }
 
         // Send response with the forms found
-        res.json(forms);
+        res.json(forms[0]);
     }catch(error){
         console.error(error);
         res.status(500).send(JSON.stringify({ message: 'problem with /form/hod/status' }));
@@ -150,12 +150,12 @@ router.post("/hod/status", async(req,res) => {
 router.get("/HR/status", async(req,res) => {
     try{
         const forms = await formModel.hrStatus();
-        // console.log('hrstatus', forms);
+        console.log('hrstatus', forms);
 
         // if (forms.length === 0) { // Correct way to check if an array is empty
         //     return res.status(404).json({ message: "Entry not found" });
         // }
-        res.json(forms);
+        res.json(forms[0]);
     }catch(error){ 
         console.error(error);
         res.status(500).send(JSON.stringify({ message: 'problem with /form/HR/status' }));
