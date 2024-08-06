@@ -247,6 +247,16 @@ function AppraisalForm() {
 		e.preventDefault();
 
 		if (window.confirm("Do you want to save the form?")) {
+			// Before sending the form data
+			Object.keys(flattenedFormData).forEach(key => {
+				if (key.startsWith('A3_') && flattenedFormData[key] === '') {
+				flattenedFormData[key] = null;
+				}
+			});
+
+			if (flattenedFormData.overallRating === '') {
+				flattenedFormData.overallRating = null;
+			}
 			if(role === 'employee') {
 				axios.post('http://localhost:3000/form/employee/submit', { saveStatus: true, ...flattenedFormData })
 				.then(navigate('/employee', {state: {staffID, name: staffName}}));
