@@ -125,9 +125,103 @@ describe("HR routes integration testing", () => {
         const json = JSON.parse(res.text);
         expect(json[0]).toEqual(expected);
     }); 
+}); 
+
+describe("FUZZING TESTS", () => {
+    const naughty_list_non_str = [
+        [],
+        null,
+        undefined,
+        {},
+        [],
+        [],
+        [null],
+        [undefined],
+        [{}],
+        [""],
+        [1],
+        [0],
+        [true],
+        [false],
+        true,
+        false
+    ];
+
+    const naughty_list = [
+        "", 
+        "undefined", 
+        "undef", 
+        "null", 
+        "NULL", 
+        "(null)", 
+        "nil", 
+        "NIL", 
+        "true", 
+        "false", 
+        "True", 
+        "False", 
+        "TRUE", 
+        "FALSE", 
+        "None", 
+        "hasOwnProperty", 
+        "then", 
+        "\\", 
+        "\\\\", 
+        "0", 
+        "1", 
+        "1.00", 
+        "$1.00", 
+        "1/2", 
+        "1E2", 
+        "1E02", 
+        "1E+02", 
+        "-1", 
+        "-1.00", 
+        "-$1.00", 
+        "-1/2", 
+        "-1E2", 
+        "-1E02", 
+        "-1E+02"
+    ];
+
+    test("Fuzzing login with non strings", async () => {
+        for (let i = 0; i < 1500; i++) {
+            const randomUsername = naughty_list_non_str[Math.floor(Math.random() * naughty_list_non_str.length)];
+            const randomPassword = naughty_list_non_str[Math.floor(Math.random() * naughty_list_non_str.length)];
+    
+            try {
+                // Simulate login attempt
+                const result = await hrModel.login(randomUsername, randomPassword);
+    
+                // Add assertions to check the behavior
+                expect(result).toStrictEqual([3]);
+            } catch (error) {
+                console.error(`Test failed for username: ${randomUsername}, password: ${randomPassword}`);
+                throw error; // Re-throw the error to ensure the test fails
+            }
+        }
+    });
+
+    test("Fuzzing login with strings", async () => {
+        for (let i = 0; i < 1550; i++) {
+            const randomUsername = naughty_list[Math.floor(Math.random() * naughty_list.length)];
+            const randomPassword = naughty_list[Math.floor(Math.random() * naughty_list.length)];
+    
+            try {
+                // Simulate login attempt
+                const result = await hrModel.login(randomUsername, randomPassword);
+    
+                // Add assertions to check the behavior
+                expect(result).toStrictEqual([1]);
+            } catch (error) {
+                console.error(`Test failed for username: ${randomUsername}, password: ${randomPassword}`);
+                throw error; // Re-throw the error to ensure the test fails
+            }
+        }
+    });
 
     afterAll(async () => {
         await teardown();
         await db.pool.end();
     });
-}); 
+});
