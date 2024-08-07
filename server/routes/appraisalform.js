@@ -139,7 +139,7 @@ router.post("/hod/status", async(req,res) => {
         // }
 
         // Send response with the forms found
-        res.json(forms[0]);
+        res.json(forms);
     }catch(error){
         console.error(error);
         res.status(500).send(JSON.stringify({ message: 'problem with /form/hod/status' }));
@@ -155,7 +155,7 @@ router.get("/HR/status", async(req,res) => {
         // if (forms.length === 0) { // Correct way to check if an array is empty
         //     return res.status(404).json({ message: "Entry not found" });
         // }
-        res.json(forms[0]);
+        res.json(forms);
     }catch(error){ 
         console.error(error);
         res.status(500).send(JSON.stringify({ message: 'problem with /form/HR/status' }));
