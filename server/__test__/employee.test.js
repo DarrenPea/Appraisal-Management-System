@@ -59,10 +59,10 @@ describe("employeeModel: retrieval unit testing", () => {
     });
 
     test ("Testing: findByAppraisalDateDue()", async() => {
-        const expectedValue ={"employeeID": "E001", "employeeName": "John Doe", "hodID": "M001"};
+        const expectedValue ={"employeeID": "E002", "employeeName": "Jane Smith", "hodID": "M002"};
         const [value] = await employeeModel.findByAppraisalDateDue();
 
-        expect(value).toEqual(expectedValue);   
+        expect(value).toEqual({"employeeID": "E002", "employeeName": "Jane Smith", "hodID": "M002"});   
     });
 
     test ("Testing: updateNextAppraisalDate(employeeID)", async() => {
@@ -208,110 +208,230 @@ describe("employeeModel: retrieval unit testing", () => {
         expect(json[0]).toEqual(expected);
     }); 
 
-    afterAll( async() => {
-        await teardown();
-        await db.pool.end();
-    }); 
+
 });
 
-// describe("employeeModel: integration testing", () => {
-//     beforeAll(async () => {
-//         await setup();
-//     });
+describe("employeeModel: integration testing", () => {
 
-//     test("/employee/HR/status ---> hrStatus(employeeID)", async () => {
-//         const requestBody = {'employeeID' : 'E001'};
 
-//         //Sending POST request with employeeID as payload
-//         const res = await request(app)
-//             .post('/employee/HR/status')
-//             .send(requestBody) // Send the correct data format
-//             .set('Content-Type', 'application/json'); // Ensure JSON format
+    test("/employee/HR/status ---> hrStatus(employeeID)", async () => {
+        const requestBody = {'employeeID' : 'E001'};
 
-//         expect(res.statusCode).toBe(200);
+        //Sending POST request with employeeID as payload
+        const res = await request(app)
+            .post('/employee/HR/status')
+            .send(requestBody) // Send the correct data format
+            .set('Content-Type', 'application/json'); // Ensure JSON format
 
-//         const expected = {
-//             "employeeName" : "John Doe",
-//             "department" : "IT"
-//         };
+        expect(res.statusCode).toBe(200);
 
-//         const json = JSON.parse(res.text);
-//         expect(json[0]).toEqual(expected);
-//     });
+        const expected = {
+            "employeeName" : "John Doe",
+            "department" : "IT"
+        };
 
-//     test("/employee/details ---> hrStatus(employeeID)", async () => {
+        const json = JSON.parse(res.text);
+        expect(json[0]).toEqual(expected);
+    });
 
-//         const requestBody = {employeeID : 'E001'};
-//         //Sending POST request with employeeID as payload
-//         const res = await request(app)
-//             .post('/employee/details')
-//             .send(requestBody) // Send the correct data format
-//             .set('Content-Type', 'application/json'); // Ensure JSON format
+    test("/employee/details ---> hrStatus(employeeID)", async () => {
 
-//         expect(res.statusCode).toBe(200);
+        const requestBody = {employeeID : 'E001'};
+        //Sending POST request with employeeID as payload
+        const res = await request(app)
+            .post('/employee/details')
+            .send(requestBody) // Send the correct data format
+            .set('Content-Type', 'application/json'); // Ensure JSON format
 
-//         const expected = {
-//             "KPI": "4.50", 
-//             "attendanceRecord": "Excellent", 
-//             "disciplinaryRecord": "None", 
-//             "jobFunction": "Ensure servers are up and running"
-//         };
+        expect(res.statusCode).toBe(200);
 
-//         const json = JSON.parse(res.text);
-//         expect(json[0]).toEqual(expected);
-//     }); 
+        const expected = {
+            "KPI": "4.50", 
+            "attendanceRecord": "Excellent", 
+            "disciplinaryRecord": "None", 
+            "jobFunction": "Ensure servers are up and running"
+        };
 
-//     test("/employee/login for valid users", async () => {
+        const json = JSON.parse(res.text);
+        expect(json[0]).toEqual(expected);
+    }); 
 
-//         const requestBody = {employeeID : 'E001', employeePassword: 'password123'};
-//         //Sending POST request with employeeID as payload
-//         const res = await request(app)
-//             .post('/employee/login')
-//             .send(requestBody) // Send the correct data format
-//             .set('Content-Type', 'application/json'); // Ensure JSON format
+    test("/employee/login for valid users", async () => {
 
-//         expect(res.statusCode).toBe(200);
+        const requestBody = {employeeID : 'E001', employeePassword: 'password123'};
+        //Sending POST request with employeeID as payload
+        const res = await request(app)
+            .post('/employee/login')
+            .send(requestBody) // Send the correct data format
+            .set('Content-Type', 'application/json'); // Ensure JSON format
 
-//         const expected = {"employeeName": "John Doe", "role": "Employee"};
+        expect(res.statusCode).toBe(200);
 
-//         const json = JSON.parse(res.text);
-//         expect(json[0]).toEqual(expected);
-//     }); 
-//     test("/employee/login, wrong password", async () => {
+        const expected = {"employeeName": "John Doe", "role": "Employee"};
 
-//         const requestBody = {employeeID : 'E001', employeePassword: 'password1233'};
-//         //Sending POST request with employeeID as payload
-//         const res = await request(app)
-//             .post('/employee/login')
-//             .send(requestBody) // Send the correct data format
-//             .set('Content-Type', 'application/json'); // Ensure JSON format
+        const json = JSON.parse(res.text);
+        expect(json[0]).toEqual(expected);
+    }); 
+    test("/employee/login, wrong password", async () => {
 
-//         expect(res.statusCode).toBe(200);
+        const requestBody = {employeeID : 'E001', employeePassword: 'password1233'};
+        //Sending POST request with employeeID as payload
+        const res = await request(app)
+            .post('/employee/login')
+            .send(requestBody) // Send the correct data format
+            .set('Content-Type', 'application/json'); // Ensure JSON format
 
-//         const expected = 2;
+        expect(res.statusCode).toBe(200);
 
-//         const json = JSON.parse(res.text);
-//         expect(json[0]).toEqual(expected);
-//     }); 
-//     test("/employee/login, wrong password", async () => {
+        const expected = 2;
 
-//         const requestBody = {employeeID : 'E0012443', employeePassword: 'password123'};
-//         //Sending POST request with employeeID as payload
-//         const res = await request(app)
-//             .post('/employee/login')
-//             .send(requestBody) // Send the correct data format
-//             .set('Content-Type', 'application/json'); // Ensure JSON format
+        const json = JSON.parse(res.text);
+        expect(json[0]).toEqual(expected);
+    }); 
+    test("/employee/login, wrong password", async () => {
 
-//         expect(res.statusCode).toBe(200);
+        const requestBody = {employeeID : 'E0012443', employeePassword: 'password123'};
+        //Sending POST request with employeeID as payload
+        const res = await request(app)
+            .post('/employee/login')
+            .send(requestBody) // Send the correct data format
+            .set('Content-Type', 'application/json'); // Ensure JSON format
 
-//         const expected = 1;
+        expect(res.statusCode).toBe(200);
 
-//         const json = JSON.parse(res.text);
-//         expect(json[0]).toEqual(expected);
-//     }); 
+        const expected = 1;
 
-//     afterAll(async () => {
-//         await teardown();
-//         await db.pool.end();
-//     });
-// }); 
+        const json = JSON.parse(res.text);
+        expect(json[0]).toEqual(expected);
+    }); 
+}); 
+
+describe("FUZZING TESTS", () => {
+    const naughty_list_non_str = [
+        [],
+        null,
+        undefined,
+        {},
+        [],
+        [],
+        [null],
+        [undefined],
+        [{}],
+        [""],
+        [1],
+        [0],
+        [true],
+        [false],null,
+        undefined,
+        true,
+        false,
+        0,
+        1,
+        -1,
+        1.23,
+        -1.23,
+        NaN,
+        Infinity,
+        -Infinity,
+        [],
+        {},
+        new Date(),
+        function() {},
+        Symbol('symbol'),
+        BigInt(12345678901234567890n),
+        new Map(),
+        new Set(),
+        new WeakMap(),
+        new WeakSet(),
+        new ArrayBuffer(8),
+        new Uint8Array([1, 2, 3]),
+        new Int8Array([1, 2, 3]),
+        new Uint16Array([1, 2, 3]),
+        new Int16Array([1, 2, 3]),
+        new Uint32Array([1, 2, 3]),
+        new Int32Array([1, 2, 3]),
+        new Float32Array([1.1, 2.2, 3.3]),
+        new Float64Array([1.1, 2.2, 3.3]),
+        new DataView(new ArrayBuffer(8)),
+        new Promise((resolve) => resolve(1)),
+        new RegExp('ab+c', 'i')
+    ];
+
+    const naughty_list = [
+        "", 
+        "undefined", 
+        "undef", 
+        "null", 
+        "NULL", 
+        "(null)", 
+        "nil", 
+        "NIL", 
+        "true", 
+        "false", 
+        "True", 
+        "False", 
+        "TRUE", 
+        "FALSE", 
+        "None", 
+        "hasOwnProperty", 
+        "then", 
+        "\\", 
+        "\\\\", 
+        "0", 
+        "1", 
+        "1.00", 
+        "$1.00", 
+        "1/2", 
+        "1E2", 
+        "1E02", 
+        "1E+02", 
+        "-1", 
+        "-1.00", 
+        "-$1.00", 
+        "-1/2", 
+        "-1E2", 
+        "-1E02", 
+        "-1E+02"
+    ];
+
+    test("Fuzzing login with non strings", async () => {
+        for (let i = 0; i < 15000; i++) {
+            const randomUsername = naughty_list_non_str[Math.floor(Math.random() * naughty_list_non_str.length)];
+            const randomPassword = naughty_list_non_str[Math.floor(Math.random() * naughty_list_non_str.length)];
+    
+            try {
+                // Simulate login attempt
+                const result = await employeeModel.login(randomUsername, randomPassword);
+    
+                // Add assertions to check the behavior
+                expect(result).toStrictEqual([3]);
+            } catch (error) {
+                console.error(`Test failed for username: ${randomUsername}, password: ${randomPassword}`);
+                throw error; // Re-throw the error to ensure the test fails
+            }
+        }
+    });
+
+    test("Fuzzing login with strings", async () => {
+        for (let i = 0; i < 1500; i++) {  
+            const randomUsername = naughty_list[Math.floor(Math.random() * naughty_list.length)];
+            const randomPassword = naughty_list[Math.floor(Math.random() * naughty_list.length)];
+    
+            try {
+                // Simulate login attempt
+                const result = await employeeModel.login(randomUsername, randomPassword);
+    
+                // Add assertions to check the behavior
+                expect(result).toStrictEqual([1]);
+            } catch (error) {
+                console.error(`Test failed for username: ${randomUsername}, password: ${randomPassword}`);
+                throw error; // Re-throw the error to ensure the test fails
+            }
+        }
+    });
+
+    afterAll(async () => {
+        await teardown();
+        await db.pool.end();
+    });
+});

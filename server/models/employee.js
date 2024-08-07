@@ -86,7 +86,8 @@ class Employee {
 
       // Query to get employees whose next appraisal month is the current month
       // const [employees] = await db.pool.query(`SELECT employeeID, hodID FROM employees where MONTH(nextAppraisalDate) = ?`, [currentMonth]);
-      const [employees] = await db.pool.query(`SELECT employeeID, hodID, employeeDateJoined FROM employees where MONTH(nextAppraisalDate) = ? AND YEAR(nextAppraisalDate) = ?`, [currentMonth, currentYear]);
+      //const [employees] = await db.pool.query(`SELECT employeeID, hodID, employeeDateJoined FROM employees where MONTH(nextAppraisalDate) = ? AND YEAR(nextAppraisalDate) = ?`, [currentMonth, currentYear]);
+      const [employees] = await db.pool.query(`SELECT employeeID, employeeName, hodID FROM employees where MONTH(nextAppraisalDate) = ?`, [currentMonth]);
       return employees;
       } catch (error) {
         console.error('Error finding employees by appraisal date:', error);
@@ -137,6 +138,11 @@ class Employee {
 }
 
 async function login(staffID, password) {
+
+  if (typeof staffID !== 'string' || typeof password !== 'string') {
+    return [3];
+  }
+
   try {
     const [rows] = await db.pool.query(
       `SELECT employeeName, role, employeePassword 

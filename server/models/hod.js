@@ -39,6 +39,11 @@ class HOD {
 
 //routename: /hod/login
 async function login(staffID, password) {
+
+  if (typeof staffID !== 'string' || typeof password !== 'string') {
+    return [3];
+  }
+  
   try {
     const [rows] = await db.pool.query(
       `SELECT hodName, role, hodPassword 
